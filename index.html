@@ -1,0 +1,1049 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#2747c9"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Objectif 132"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Objectif 132</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Space+Grotesk:wght@600;700&display=swap">
+<style>
+/* Layout : feuille de réponses — une colonne étroite, bulles (1)(2)(3)(4) comme sur la fiche du NITE, barre d'onglets en bas */
+:root{
+  --paper:#f6f7f9; --card:#ffffff; --ink:#18212f; --muted:#5d6878; --line:#d9dee7;
+  --accent:#2747c9; --accent-soft:#e6ebfb; --on-accent:#ffffff; --ok:#147a4b; --ok-soft:#e1f3ea; --bad:#b4282f; --bad-soft:#fbe6e7; --mark:#d99a00; --mid:#8a5a00; --mid-soft:#fbf0d6;
+  --f-display:"Space Grotesk",system-ui,sans-serif; --f-body:"IBM Plex Sans",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11151c; --card:#1a2029; --ink:#e7ebf1; --muted:#9aa5b5; --line:#2c3440;
+  --accent:#8ea6ff; --accent-soft:#232c45; --on-accent:#0d1220; --ok:#5fd09a; --ok-soft:#173226; --bad:#ff8a8f; --bad-soft:#3a1d21; --mark:#f2c94c; --mid:#f2c94c; --mid-soft:#352c14; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11151c; --card:#1a2029; --ink:#e7ebf1; --muted:#9aa5b5; --line:#2c3440;
+  --accent:#8ea6ff; --accent-soft:#232c45; --on-accent:#0d1220; --ok:#5fd09a; --ok-soft:#173226; --bad:#ff8a8f; --bad-soft:#3a1d21; --mark:#f2c94c; --mid:#f2c94c; --mid-soft:#352c14; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 calc(84px + env(safe-area-inset-bottom,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:680px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+button,input,textarea{font:inherit;color:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+a{color:var(--accent)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.stack{display:grid;gap:10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* onglets */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1px solid var(--line);
+  padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+.tabs .in{max-width:680px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.tabs a{display:grid;justify-items:center;gap:2px;padding:6px 2px;border-radius:10px;text-decoration:none;color:var(--muted);font-size:11.5px;font-weight:500}
+.tabs a svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabs a[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+
+/* en-têtes de page */
+.ph{padding-block:22px 12px;display:grid;gap:4px}
+.ph h1{font-size:28px;line-height:1.15}
+.ph p{margin:0;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;display:grid;min-width:0}
+.stat b{font-family:var(--f-mono);font-size:20px;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.sec{margin-top:18px;display:grid;gap:8px}
+.sec>h2{font-size:17px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.list{display:grid;gap:8px}
+.item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;cursor:pointer;text-decoration:none;color:inherit;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.item:hover{border-color:var(--accent)}
+.item .num{font-family:var(--f-mono);font-weight:600;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-size:14px}
+.item .txt{min-width:0}
+.item .txt b{display:block;font-weight:600}
+.item .txt small{color:var(--muted);font-size:13px}
+.pill{font-family:var(--f-mono);font-size:13px;padding:3px 9px;border-radius:99px;background:var(--paper);border:1px solid var(--line);white-space:nowrap}
+.pill.good{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.pill.mid{background:var(--mid-soft);color:var(--mid);border-color:transparent}
+.pill.low{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.seg button{flex:1;border:0;background:transparent;padding:10px 8px;font-size:14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:600}
+.primary{border:0;background:var(--accent);color:var(--on-accent);border-radius:12px;padding:14px;font-weight:600;font-size:16px;cursor:pointer;text-align:center;text-decoration:none;display:block}
+.secondary{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px;cursor:pointer;text-align:center;text-decoration:none;color:inherit;display:block}
+.danger{border:0;background:var(--bad);color:var(--card);border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0;font-size:13px}
+.confirm{background:var(--bad-soft);border:1px solid var(--bad);border-radius:12px;padding:12px;display:grid;gap:8px}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:16px;color:var(--muted)}
+
+/* planning */
+.goal{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;color:inherit}
+.goal .chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center}
+.goal.done .chk{background:var(--ok);border-color:var(--ok)}
+.goal.done .chk::after{content:"";width:10px;height:6px;border-left:2.5px solid var(--card);border-bottom:2.5px solid var(--card);transform:rotate(-45deg) translate(1px,-1px)}
+.goal.done b{text-decoration:line-through;text-decoration-color:var(--muted)}
+.goal b{font-weight:600;display:block}
+.goal small{color:var(--muted);font-size:13px}
+.goal .go{font-size:13px;color:var(--accent);font-weight:600;white-space:nowrap}
+.phases{display:grid;gap:6px}
+.phase{display:grid;grid-template-columns:12px 1fr;gap:10px;align-items:start}
+.phase .dot{width:12px;height:12px;border-radius:50%;margin-top:5px;background:var(--line)}
+.phase.now .dot{background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.phase.past{color:var(--muted)}
+.phase b{font-weight:600}
+.toggle{display:flex;align-items:center;gap:10px;cursor:pointer}
+.toggle input{width:20px;height:20px;accent-color:var(--accent)}
+
+/* quiz */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:10px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.back{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px;text-decoration:none;color:inherit;white-space:nowrap}
+.bar .t{flex:1;min-width:0}
+.bar .t b{display:block;font-family:var(--f-display);font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .t small{color:var(--muted);font-size:12px}
+.timer{font-family:var(--f-mono);font-size:15px;padding:4px 8px;border-radius:8px;background:var(--card);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.timer.over{color:var(--bad);border-color:var(--bad)}
+.part-head{font-family:var(--f-display);font-size:15px;margin-block:18px 8px;color:var(--accent)}
+.intro{margin:0 0 8px;color:var(--muted);font-size:14px}
+.tablewrap{overflow-x:auto;margin-bottom:6px}
+table.data{border-collapse:collapse;font-size:14px;background:var(--card);min-width:100%}
+table.data th,table.data td{border:1px solid var(--line);padding:6px 10px;text-align:center;font-variant-numeric:tabular-nums}
+table.data th{background:var(--accent-soft)}
+table.data td:first-child,table.data th:first-child{text-align:left;font-weight:600}
+.note{font-size:13px;font-style:italic;color:var(--muted);margin:4px 0 10px}
+.chart{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px;margin-bottom:6px}
+.chart svg,.fig svg{width:100%;height:auto;display:block}
+.fig{max-width:300px;margin:10px 0 2px}
+.fig svg *{vector-effect:non-scaling-stroke}
+.q{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.q.ok{border-color:var(--ok)} .q.bad{border-color:var(--bad)}
+.q .head{display:grid;grid-template-columns:auto 1fr;gap:10px}
+.q .n{font-family:var(--f-mono);font-weight:600;color:var(--muted)}
+.q .text{min-width:0}
+.opts{display:grid;gap:8px;margin-top:12px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:48px}
+.opt .bub{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid var(--muted);display:grid;place-items:center;font-family:var(--f-mono);font-size:13px;font-weight:600;color:var(--muted)}
+.opt .lab{min-width:0}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt[aria-pressed="true"] .bub{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)} .opt.right .bub{background:var(--ok);border-color:var(--ok);color:var(--card)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)} .opt.wrong .bub{background:var(--bad);border-color:var(--bad);color:var(--card)}
+.opt:disabled{cursor:default}
+.expl{margin-top:10px;font-size:14px;padding:10px 12px;border-radius:8px;background:var(--paper);border-left:3px solid var(--mark);display:grid;gap:6px}
+.expl b{font-family:var(--f-mono)}
+.tip{font-size:14px}
+.tip strong{color:var(--accent)}
+.ask{display:grid;gap:6px}
+.ask .out{white-space:pre-wrap;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px}
+.askbtn{justify-self:start;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:99px;padding:5px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.actions{display:grid;gap:8px;margin-top:16px}
+.result{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:6px;margin-bottom:14px}
+.result .big{font-family:var(--f-mono);font-size:40px;font-weight:600;line-height:1}
+.result p{margin:0;color:var(--muted)}
+
+/* calcul mental */
+.drill{display:grid;gap:14px;justify-items:center;text-align:center;padding-top:20px}
+.drill .prompt{font-family:var(--f-mono);font-size:42px;font-weight:600;line-height:1.2;font-variant-numeric:tabular-nums}
+.drill input{width:100%;max-width:260px;font-family:var(--f-mono);font-size:30px;text-align:center;padding:10px;border-radius:12px;border:2px solid var(--line);background:var(--card)}
+.drill input.ok{border-color:var(--ok);background:var(--ok-soft)}
+.drill input.bad{border-color:var(--bad);background:var(--bad-soft)}
+.drill .fb{min-height:24px;font-weight:600}
+.drill .fb.ok{color:var(--ok)} .drill .fb.bad{color:var(--bad)}
+.meter{height:6px;background:var(--line);border-radius:99px;overflow:hidden;width:100%}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:99px}
+
+/* cartes */
+.flash{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 18px;min-height:220px;display:grid;align-content:center;gap:12px;text-align:center}
+.flash .front{font-family:var(--f-display);font-size:22px;line-height:1.3}
+.flash .back{font-size:18px;border-top:1px dashed var(--line);padding-top:12px}
+.flash .back b{font-family:var(--f-mono)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.boxes{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.boxes div{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px;text-align:center;font-size:12px;color:var(--muted)}
+.boxes b{display:block;font-family:var(--f-mono);font-size:17px;color:var(--ink)}
+
+/* stats */
+.hbar{display:grid;grid-template-columns:minmax(0,9.5em) 1fr auto;gap:10px;align-items:center;font-size:14px}
+.hbar .track{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.hbar .track i{display:block;height:100%;border-radius:99px}
+.hbar .v{font-family:var(--f-mono);font-size:13px;min-width:5.5em;text-align:right;font-variant-numeric:tabular-nums}
+.est{display:grid;gap:4px}
+.est .big{font-family:var(--f-mono);font-size:44px;font-weight:600;line-height:1}
+textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px;font-family:var(--f-mono);font-size:12px;word-break:break-all}
+.status{display:flex;gap:8px;align-items:center;font-size:14px}
+.status i{width:10px;height:10px;border-radius:50%;background:var(--muted);flex:none}
+.status.on i{background:var(--ok)} .status.warn i{background:var(--mark)}
+sup,sub{line-height:0}
+@media (prefers-reduced-motion:no-preference){.opt,.item,.goal{transition:border-color .15s,background .15s}}
+</style>
+
+<div class="wrap" id="app"></div>
+<nav class="tabs" aria-label="Navigation"><div class="in">
+  <a href="#plan" data-tab="plan"><svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M8 14l2.5 2.5L16 12"/></svg>Aujourd'hui</a>
+  <a href="#fiches" data-tab="fiches"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>Fiches</a>
+  <a href="#entrainement" data-tab="entrainement"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/><circle cx="12" cy="12" r="9.5"/></svg>Entraînement</a>
+  <a href="#cartes" data-tab="cartes"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12"/></svg>Cartes</a>
+  <a href="#stats" data-tab="stats"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Stats</a>
+</div></nav>
+
+<script id="data" type="application/json">[{"id": "f1", "title": "Nombres et calcul", "sub": "15 questions · 15 minutes", "parts": [{"q": [{"t": "3/4 − 2/3 = ?", "o": ["1/6", "1/7", "1/12", "5/12"], "a": 3, "e": "9/12 − 8/12 = 1/12."}, {"t": "Combien de nombres entiers sont compris entre −3,5 et 4,2 ?", "o": ["6", "8", "9", "7"], "a": 2, "e": "−3, −2, −1, 0, 1, 2, 3, 4 → 8 nombres."}, {"t": "a est un nombre entier impair.<br>Lequel des nombres suivants est nécessairement pair ?", "o": ["a² + 2", "2a + 1", "a² + a", "3a"], "a": 3, "e": "a² est impair, a est impair : impair + impair = pair."}, {"t": "2<sup>10</sup> − 2<sup>9</sup> = ?", "o": ["1", "2<sup>9</sup>", "2<sup>19</sup>", "2"], "a": 2, "e": "2<sup>10</sup> = 2·2<sup>9</sup>, donc 2·2<sup>9</sup> − 2<sup>9</sup> = 2<sup>9</sup>."}, {"t": "Quel est le plus petit nombre entier positif divisible à la fois par 6, par 8 et par 10 ?", "o": ["120", "240", "60", "480"], "a": 1, "e": "PPCM : 6 = 2·3, 8 = 2³, 10 = 2·5 → 2³·3·5 = 120."}, {"t": "Donnée : x = 0,5<br>Lequel des ordres suivants est correct ?", "o": ["√x &lt; x &lt; x² &lt; 1/x", "x &lt; x² &lt; √x &lt; 1/x", "1/x &lt; x² &lt; x &lt; √x", "x² &lt; x &lt; √x &lt; 1/x"], "a": 4, "e": "x² = 0,25 ; x = 0,5 ; √x ≈ 0,71 ; 1/x = 2. Entre 0 et 1 : x² &lt; x &lt; √x."}, {"t": "a et b sont deux nombres premiers différents, et a + b = 15.<br>a · b = ?", "o": ["54", "44", "56", "26"], "a": 4, "e": "Une somme impaire de 2 premiers impose que l'un soit 2 (seul premier pair) : 2 + 13 → 26."}, {"t": "(−1)<sup>25</sup> + (−1)<sup>24</sup> + (−1)<sup>23</sup> = ?", "o": ["1", "−1", "3", "−3"], "a": 2, "e": "Puissance impaire → −1, paire → +1 : −1 + 1 − 1 = −1."}, {"t": "Le reste de la division de n par 7 est 5.<br>Quel est le reste de la division de 3n par 7 ?", "o": ["3", "1", "5", "6"], "a": 2, "e": "Prends n = 5 : 3n = 15 = 2·7 + 1 → reste 1."}, {"t": "Combien de diviseurs positifs le nombre 72 a-t-il ?", "o": ["10", "12", "14", "8"], "a": 2, "e": "72 = 2³·3² → (3+1)(2+1) = 12."}, {"t": "(√12 + √27)² = ?", "o": ["75", "81", "39", "45"], "a": 1, "e": "√12 = 2√3, √27 = 3√3 → (5√3)² = 25·3 = 75."}, {"t": "Donnée : a &lt; 0 &lt; b<br>Laquelle des expressions suivantes est nécessairement positive ?", "o": ["a · b", "a² − b²", "a + b", "b − a"], "a": 4, "e": "b − a = positif + |a| &gt; 0. Les autres dépendent des valeurs ou sont négatives."}, {"t": "3<sup>x</sup> · 9 = 27² <br>x = ?", "o": ["2", "8", "4", "6"], "a": 3, "e": "3<sup>x+2</sup> = 3<sup>6</sup> → x = 4."}, {"t": "n est un nombre entier tel que n/4 est un nombre impair.<br>Laquelle des affirmations suivantes est nécessairement vraie ?", "o": ["n est divisible par 8", "n + 4 est divisible par 8", "n/2 est un nombre impair", "n est divisible par 12"], "a": 2, "e": "n = 4k (k impair). n + 4 = 4(k + 1), et k + 1 est pair → divisible par 8. Essaie n = 4 : 8 oui ; n = 12 : 16 oui."}, {"t": "Combien de nombres entiers de 1 à 100 (inclus) ne sont divisibles ni par 2 ni par 5 ?", "o": ["50", "30", "45", "40"], "a": 4, "e": "100 − 50 (pairs) − 20 (multiples de 5) + 10 (multiples de 10 comptés deux fois) = 40."}]}]}, {"id": "f2", "title": "Algèbre", "sub": "15 questions · 15 minutes", "parts": [{"q": [{"t": "3x − 7 = 2x + 5<br>x = ?", "o": ["−2", "−12", "12", "2"], "a": 3, "e": "3x − 2x = 5 + 7 → x = 12."}, {"t": "Donnée : 2a + 3 = 11<br>4a + 6 = ?", "o": ["25", "14", "22", "19"], "a": 3, "e": "4a + 6 = 2·(2a + 3) = 22. Pas besoin de trouver a !"}, {"t": "(x + 3)² − (x − 3)² = ?", "o": ["6x", "0", "12x", "18"], "a": 3, "e": "(x² + 6x + 9) − (x² − 6x + 9) = 12x."}, {"t": "Données : x + y = 10 et x − y = 4<br>x · y = ?", "o": ["21", "16", "40", "24"], "a": 1, "e": "On additionne : 2x = 14 → x = 7, y = 3 → 21."}, {"t": "On définit l'opération a # b = a² − 2b.<br>3 # (2 # 1) = ?", "o": ["1", "5", "7", "3"], "a": 2, "e": "2 # 1 = 4 − 2 = 2, puis 3 # 2 = 9 − 4 = 5."}, {"t": "Pour quelles valeurs de x a-t-on −3x + 6 &gt; 0 ?", "o": ["x &lt; 2", "x &gt; 2", "x &lt; −2", "x &gt; −2"], "a": 1, "e": "−3x &gt; −6 → on divise par −3 et on inverse : x &lt; 2."}, {"t": "Quelle est la somme des solutions de l'équation x² − 7x + 10 = 0 ?", "o": ["7", "3", "10", "−7"], "a": 1, "e": "Somme = −b/a = 7 (les solutions sont 2 et 5)."}, {"t": "(x² − 9) / (x + 3) = ?     (x ≠ −3)", "o": ["3 − x", "x + 3", "x − 3", "x − 9"], "a": 3, "e": "x² − 9 = (x − 3)(x + 3)."}, {"t": "Donnée : x/y = 3/4<br>(x + y)/y = ?", "o": ["4/7", "7/4", "3/7", "7/3"], "a": 2, "e": "(x + y)/y = x/y + 1 = 3/4 + 1 = 7/4."}, {"t": "Quelle est la somme des solutions de l'équation |x − 2| = 5 ?", "o": ["4", "−4", "7", "10"], "a": 1, "e": "x − 2 = 5 → x = 7 ; x − 2 = −5 → x = −3. Somme 4."}, {"t": "Données : a · b = 12 et a² + b² = 25<br>(a + b)² = ?", "o": ["49", "37", "61", "144"], "a": 1, "e": "(a + b)² = a² + b² + 2ab = 25 + 24 = 49."}, {"t": "Donnée : 2<sup>x</sup> = 5<br>2<sup>x+3</sup> = ?", "o": ["40", "8", "15", "125"], "a": 1, "e": "2<sup>x+3</sup> = 2<sup>x</sup>·2³ = 5·8 = 40."}, {"t": "Un stylo coûte a shekels et un cahier coûte 3 shekels de plus qu'un stylo.<br>Combien coûtent ensemble 2 stylos et 3 cahiers ?", "o": ["5a + 3", "5a + 9", "6a + 9", "5a + 6"], "a": 2, "e": "2a + 3(a + 3) = 5a + 9."}, {"t": "Donnée : x + 1/x = 4<br>x² + 1/x² = ?", "o": ["14", "16", "18", "12"], "a": 1, "e": "(x + 1/x)² = x² + 2 + 1/x² = 16 → x² + 1/x² = 14."}, {"t": "Donnée : a &gt; b &gt; 0<br>Laquelle des expressions suivantes est nécessairement négative ?", "o": ["a/b − 1", "(a − b)²", "a² − b²", "(b − a)/(a + b)"], "a": 4, "e": "b − a &lt; 0 et a + b &gt; 0 → quotient négatif."}]}]}, {"id": "f3", "title": "Pourcentages et proportions", "sub": "15 questions · 15 minutes", "parts": [{"q": [{"t": "Un article coûte 80 shekels. Quel est son prix après une réduction de 15 % ?", "o": ["72", "75", "68", "65"], "a": 3, "e": "80 × 0,85 = 68."}, {"t": "30 % de 40 % de 500 = ?", "o": ["35", "70", "60", "120"], "a": 3, "e": "0,3 × 0,4 × 500 = 0,12 × 500 = 60."}, {"t": "Le prix d'un article augmente de 20 %, puis baisse de 20 %.<br>Par rapport au prix initial, le prix final est :", "o": ["identique", "supérieur de 4 %", "inférieur de 4 %", "inférieur de 2 %"], "a": 3, "e": "1,2 × 0,8 = 0,96 → −4 %."}, {"t": "Un salaire passe de 8000 à 9000 shekels. De quel pourcentage a-t-il augmenté ?", "o": ["13 %", "12,5 %", "10 %", "environ 11,1 %"], "a": 2, "e": "1000/8000 = 1/8 = 12,5 %. On divise par l'ANCIENNE valeur."}, {"t": "Dans une classe de 32 élèves, le rapport entre le nombre de garçons et le nombre de filles est de 3 : 5.<br>Combien y a-t-il de filles ?", "o": ["20", "15", "12", "24"], "a": 1, "e": "8 parts de 4 élèves → filles = 5 × 4 = 20."}, {"t": "Après une hausse de 25 %, un article coûte 150 shekels. Quel était son prix initial ?", "o": ["130", "125", "120", "112,5"], "a": 3, "e": "150 / 1,25 = 120."}, {"t": "A est plus grand que B de 25 %.<br>De quel pourcentage B est-il plus petit que A ?", "o": ["25 %", "30 %", "75 %", "20 %"], "a": 4, "e": "Prends B = 100, A = 125 : 25/125 = 20 %."}, {"t": "Une recette demande 3 œufs pour 250 g de farine. Combien d'œufs faut-il pour 1 kg de farine ?", "o": ["9", "12", "10", "15"], "a": 2, "e": "1 kg = 4 × 250 g → 4 × 3 = 12."}, {"t": "6 ouvriers construisent un mur en 10 jours. Combien de jours faut-il à 4 ouvriers travaillant au même rythme ?", "o": ["12", "6⅔", "20", "15"], "a": 4, "e": "Proportionnalité inverse : 6 × 10 = 60 jours-ouvrier → 60/4 = 15."}, {"t": "Une ville compte 2000 habitants. Sa population augmente de 10 % chaque année. Combien d'habitants aura-t-elle dans 2 ans ?", "o": ["2400", "2200", "2440", "2420"], "a": 4, "e": "2000 × 1,1 × 1,1 = 2420 (pas 2400 : la 2ᵉ hausse porte sur 2200)."}, {"t": "Donnée : x % de y = 30<br>y % de x = ?", "o": ["300", "30", "0,3", "Impossible à déterminer"], "a": 2, "e": "x·y/100 dans les deux cas → 30."}, {"t": "Un récipient contient 40 litres d'un mélange contenant 25 % de sucre. Combien de litres d'eau faut-il ajouter pour que le mélange contienne 20 % de sucre ?", "o": ["8", "12", "5", "10"], "a": 4, "e": "Sucre = 10 L. 10/(40 + w) = 0,2 → 40 + w = 50 → w = 10."}, {"t": "Données : a : b = 2 : 3 et b : c = 4 : 5<br>a : c = ?", "o": ["2 : 5", "3 : 5", "10 : 12", "8 : 15"], "a": 4, "e": "On rend b commun : a : b = 8 : 12 et b : c = 12 : 15 → a : c = 8 : 15."}, {"t": "Le prix p d'un article augmente de 50 %. De quel pourcentage faut-il ensuite baisser le nouveau prix pour revenir à p ?", "o": ["66⅔ %", "50 %", "25 %", "33⅓ %"], "a": 4, "e": "1,5p → p : on enlève 0,5p sur 1,5p = 1/3."}, {"t": "Dans un groupe, 60 % des personnes sont des femmes. 25 % des femmes et 50 % des hommes portent des lunettes.<br>Quel pourcentage du groupe porte des lunettes ?", "o": ["75 %", "40 %", "37,5 %", "35 %"], "a": 4, "e": "0,6 × 0,25 + 0,4 × 0,5 = 0,15 + 0,2 = 35 %."}]}]}, {"id": "f4", "title": "Problèmes : vitesse, travail, âges", "sub": "15 questions · 18 minutes", "parts": [{"q": [{"t": "Un train parcourt 240 km en 3 heures. Quelle est sa vitesse (en km/h) ?", "o": ["60", "90", "72", "80"], "a": 4, "e": "240 / 3 = 80."}, {"t": "Une voiture roule à 90 km/h pendant 40 minutes. Quelle distance (en km) parcourt-elle ?", "o": ["36", "50", "60", "65"], "a": 3, "e": "40 min = 2/3 h → 90 × 2/3 = 60."}, {"t": "Une voiture fait l'aller à 60 km/h et le retour, sur la même route, à 30 km/h.<br>Quelle est sa vitesse moyenne sur l'ensemble du trajet (en km/h) ?", "o": ["40", "50", "45", "42"], "a": 1, "e": "Prends 60 km : aller 1 h, retour 2 h → 120 km / 3 h = 40. (Pas 45 !)"}, {"t": "Deux villes sont distantes de 300 km. Deux voitures partent en même temps, chacune d'une ville, l'une vers l'autre, à 70 km/h et 80 km/h.<br>Après combien d'heures se croisent-elles ?", "o": ["2", "2,5", "1,5", "3"], "a": 1, "e": "Sens opposés : on additionne les vitesses → 300 / 150 = 2."}, {"t": "Le robinet A remplit un bassin en 6 heures, le robinet B en 3 heures.<br>En combien d'heures les deux robinets ensemble remplissent-ils le bassin ?", "o": ["2", "4,5", "1,5", "9"], "a": 1, "e": "1/6 + 1/3 = 1/2 du bassin par heure → 2 heures."}, {"t": "Dani a 3 fois l'âge de son fils. Dans 12 ans, il aura 2 fois l'âge de son fils.<br>Quel est l'âge actuel du fils ?", "o": ["8", "12", "10", "15"], "a": 2, "e": "3f + 12 = 2(f + 12) → f = 12. Vérif : 36 et 12 ; dans 12 ans 48 et 24 oui."}, {"t": "La somme de trois nombres entiers consécutifs est 72. Quel est le plus grand des trois ?", "o": ["24", "23", "26", "25"], "a": 4, "e": "Le milieu = 72/3 = 24 → 23, 24, 25."}, {"t": "Un cycliste roule à la vitesse v pendant t heures, puis à la vitesse 2v pendant t heures.<br>Quelle distance totale a-t-il parcourue ?", "o": ["4vt", "2vt", "3v/t", "3vt"], "a": 4, "e": "vt + 2v·t = 3vt."}, {"t": "Ouvrier A fait un travail seul en 4 heures. A et B ensemble le font en 3 heures.<br>En combien d'heures B le fait-il seul ?", "o": ["1", "12", "6", "7"], "a": 2, "e": "1/3 − 1/4 = 1/12 → 12 heures."}, {"t": "Un robinet remplit une piscine en 4 heures. Une évacuation la vide en 6 heures.<br>Si la piscine est vide et que les deux sont ouverts, en combien d'heures sera-t-elle pleine ?", "o": ["5", "12", "2", "10"], "a": 2, "e": "1/4 − 1/6 = 1/12 → 12 heures (on SOUSTRAIT l'évacuation)."}, {"t": "Un coureur parcourt 400 mètres en 50 secondes. Quelle est sa vitesse en km/h ?", "o": ["30", "24", "28,8", "32"], "a": 3, "e": "8 m/s × 3,6 = 28,8 km/h."}, {"t": "Un bus part à 8h00 à 60 km/h. Une voiture part du même endroit à 9h00, sur la même route, à 90 km/h.<br>À quelle heure la voiture rattrape-t-elle le bus ?", "o": ["10h00", "12h00", "11h00", "10h30"], "a": 3, "e": "À 9h00 le bus a 60 km d'avance. Écart réduit de 30 km/h → 2 h → 11h00."}, {"t": "Adam fait un travail en a heures et Benny en b heures.<br>En combien d'heures le font-ils ensemble ?", "o": ["(a + b)/2", "ab/(a + b)", "a + b", "(a + b)/ab"], "a": 2, "e": "1/a + 1/b = (a + b)/ab par heure → temps = ab/(a + b). Vérifie avec a = b = 2 → 1 h oui."}, {"t": "Un billet adulte coûte 40 shekels, un billet enfant 25 shekels. Une famille achète 12 billets pour 405 shekels.<br>Combien de billets enfant a-t-elle achetés ?", "o": ["8", "5", "4", "7"], "a": 2, "e": "Si tous enfants : 300. Il manque 105, chaque adulte ajoute 15 → 7 adultes, 5 enfants."}, {"t": "Il faut 60 secondes pour monter à pied un escalier roulant arrêté, et 40 secondes pour monter en restant immobile sur l'escalier en marche.<br>Combien de secondes faut-il pour monter à pied sur l'escalier en marche ?", "o": ["50", "100", "20", "24"], "a": 4, "e": "C'est un problème de travail : 1/60 + 1/40 = 5/120 = 1/24 → 24 s."}]}]}, {"id": "f5", "title": "Moyennes, combinatoire, probabilités", "sub": "15 questions · 15 minutes", "parts": [{"q": [{"t": "Quelle est la moyenne des nombres 4, 7, 10 et 15 ?", "o": ["8", "9", "10", "9,5"], "a": 2, "e": "36 / 4 = 9."}, {"t": "La moyenne de 5 nombres est 20. On enlève l'un d'eux et la moyenne des 4 nombres restants est 18.<br>Quel nombre a été enlevé ?", "o": ["30", "22", "28", "24"], "a": 3, "e": "Somme = 100, puis 72 → 100 − 72 = 28."}, {"t": "Quelle est la médiane des nombres 3, 9, 1, 7, 12, 4 ?", "o": ["4", "7", "6", "5,5"], "a": 4, "e": "Dans l'ordre : 1, 3, 4, 7, 9, 12 → (4 + 7)/2 = 5,5."}, {"t": "La moyenne de a et b est 12. La moyenne de a, b et c est 15.<br>c = ?", "o": ["27", "21", "18", "24"], "a": 2, "e": "a + b = 24 ; a + b + c = 45 → c = 21."}, {"t": "Une classe de 20 élèves a une moyenne de 70, une autre classe de 30 élèves a une moyenne de 80.<br>Quelle est la moyenne des 50 élèves ?", "o": ["76", "74", "78", "75"], "a": 1, "e": "(1400 + 2400)/50 = 76. Plus proche de 80 car la classe B est plus grande."}, {"t": "On lance une pièce 3 fois. Quelle est la probabilité d'obtenir exactement 2 fois pile ?", "o": ["2/3", "1/2", "3/8", "1/4"], "a": 3, "e": "8 résultats ; PPF, PFP, FPP → 3/8."}, {"t": "Un sac contient 4 boules rouges et 6 boules bleues. On tire une boule au hasard. Quelle est la probabilité qu'elle soit bleue ?", "o": ["2/5", "1/6", "2/3", "3/5"], "a": 4, "e": "6/10 = 3/5."}, {"t": "De combien de façons peut-on asseoir 4 personnes sur 4 chaises placées en ligne ?", "o": ["16", "24", "4", "12"], "a": 2, "e": "4! = 24."}, {"t": "Combien de comités de 2 personnes peut-on former dans un groupe de 6 personnes ?", "o": ["12", "15", "36", "30"], "a": 2, "e": "Sans ordre : 6 × 5 / 2 = 15."}, {"t": "On lance deux dés. Quelle est la probabilité que la somme soit 8 ?", "o": ["1/6", "1/9", "7/36", "5/36"], "a": 4, "e": "(2,6) (3,5) (4,4) (5,3) (6,2) → 5/36."}, {"t": "Combien de codes de 3 chiffres (de 0 à 9) peut-on former si les trois chiffres doivent être différents ?", "o": ["720", "504", "1000", "120"], "a": 1, "e": "10 × 9 × 8 = 720 (l'ordre compte dans un code)."}, {"t": "Un sac contient 3 boules rouges et 2 bleues. On tire 2 boules sans remise.<br>Quelle est la probabilité que les deux soient rouges ?", "o": ["3/5", "9/25", "1/5", "3/10"], "a": 4, "e": "3/5 × 2/4 = 6/20 = 3/10."}, {"t": "On lance une pièce 3 fois. Quelle est la probabilité d'obtenir au moins une fois pile ?", "o": ["1/8", "7/8", "3/8", "1/2"], "a": 2, "e": "1 − P(aucun pile) = 1 − 1/8 = 7/8."}, {"t": "La moyenne de 10 nombres est 8. On ajoute 3 à chacun des nombres, puis on multiplie chaque résultat par 2.<br>Quelle est la nouvelle moyenne ?", "o": ["22", "16", "11", "19"], "a": 1, "e": "(8 + 3) × 2 = 22. La moyenne subit les mêmes opérations."}, {"t": "Combien de nombres de 3 chiffres, formés uniquement avec les chiffres 1, 2 et 3 (répétitions permises), sont pairs ?", "o": ["6", "18", "9", "27"], "a": 3, "e": "Le dernier chiffre doit être 2 : 3 × 3 × 1 = 9."}]}]}, {"id": "f6", "title": "Géométrie plane", "sub": "15 questions · 18 minutes · Fais un croquis à chaque question !", "parts": [{"q": [{"t": "Dans un triangle, deux des angles mesurent 50° et 65°. Combien mesure le troisième angle ?", "o": ["65°", "75°", "55°", "60°"], "a": 1, "e": "180 − 50 − 65 = 65°."}, {"t": "Si on double la longueur du côté d'un carré, son aire est multipliée par :", "o": ["4", "8", "16", "2"], "a": 1, "e": "Longueurs × 2 → aires × 2² = 4."}, {"t": "Un rectangle mesure 8 cm sur 6 cm. Quelle est la longueur de sa diagonale (en cm) ?", "o": ["12", "48", "10", "14"], "a": 3, "e": "Triplet 6-8-10."}, {"t": "Combien mesure chaque angle intérieur d'un hexagone régulier ?", "o": ["135°", "144°", "120°", "108°"], "a": 3, "e": "(6 − 2) × 180 / 6 = 120°."}, {"t": "Quelle est l'aire d'un cercle de rayon 5 ?", "o": ["5π", "10π", "100π", "25π"], "a": 4, "e": "π × 5² = 25π."}, {"t": "L'aire d'un carré est 50 cm². Quelle est la longueur de sa diagonale (en cm) ?", "o": ["25", "5√2", "10√2", "10"], "a": 4, "e": "Aire d'un carré = diagonale²/2 → d² = 100 → d = 10."}, {"t": "Les côtés de l'angle droit d'un triangle rectangle mesurent 5 et 12. Quel est le périmètre du triangle ?", "o": ["17", "25", "30", "60"], "a": 3, "e": "Triplet 5-12-13 → 5 + 12 + 13 = 30."}, {"t": "Un trapèze a des bases de 6 et 10 et une hauteur de 5. Quelle est son aire ?", "o": ["80", "40", "30", "50"], "a": 2, "e": "(6 + 10) × 5 / 2 = 40."}, {"t": "Deux droites parallèles sont coupées par une sécante. L'un des angles formés mesure 70°.<br>Lequel des nombres suivants peut aussi être la mesure d'un des angles formés ?", "o": ["140°", "110°", "90°", "20°"], "a": 2, "e": "Tous les angles formés valent 70° ou 180 − 70 = 110°."}, {"t": "Deux côtés d'un triangle mesurent 4 et 9. Lequel des nombres suivants peut être la longueur du troisième côté ?", "o": ["4", "5", "11", "13"], "a": 3, "e": "Inégalité triangulaire : 9 − 4 &lt; c &lt; 9 + 4 → 5 &lt; c &lt; 13."}, {"t": "Dans un triangle rectangle, un angle mesure 30° et l'hypoténuse mesure 10.<br>Quelle est la longueur du côté opposé à l'angle de 60° ?", "o": ["5", "5√3", "10√3", "5√2"], "a": 2, "e": "30-60-90 : 1 : √3 : 2 → côtés 5 (face à 30°) et 5√3 (face à 60°)."}, {"t": "Dans un cercle, un angle au centre mesure 80°. Combien mesure un angle inscrit qui intercepte le même arc ?", "o": ["100°", "160°", "40°", "80°"], "a": 3, "e": "Angle inscrit = moitié de l'angle au centre."}, {"t": "Quelle est l'aire d'un secteur circulaire de 90° dans un cercle de rayon 4 ?", "o": ["16π", "2π", "4π", "8π"], "a": 3, "e": "90/360 × π × 16 = 4π."}, {"t": "Quelle est l'aire d'un triangle équilatéral de côté 6 ?", "o": ["18√3", "9√3", "18", "36"], "a": 2, "e": "(√3/4) × 36 = 9√3."}, {"t": "ABCD est un rectangle avec AB = 8 et BC = 6. M est le milieu du côté CD.<br>Quelle est l'aire du triangle ABM ?", "o": ["48", "12", "24", "18"], "a": 3, "e": "Base AB = 8, hauteur = BC = 6 (peu importe où est M sur CD) → 24 = la moitié du rectangle."}]}]}, {"id": "f7", "title": "Espace et repère", "sub": "14 questions · 15 minutes", "parts": [{"q": [{"t": "Quel est le volume d'un cube d'arête 3 ?", "o": ["54", "27", "9", "18"], "a": 2, "e": "3³ = 27."}, {"t": "Le volume d'un cube est 64. Quelle est sa surface totale ?", "o": ["64", "16", "96", "128"], "a": 3, "e": "Arête 4 → 6 × 16 = 96."}, {"t": "Quelle est la surface totale d'un pavé de dimensions 2 × 3 × 4 ?", "o": ["26", "48", "24", "52"], "a": 4, "e": "2(6 + 12 + 8) = 52."}, {"t": "Quel est le volume d'un cylindre de rayon 3 et de hauteur 5 ?", "o": ["45π", "30π", "75π", "15π"], "a": 1, "e": "π × 9 × 5 = 45π."}, {"t": "Quelle est la distance entre les points (1 ; 2) et (4 ; 6) ?", "o": ["5", "7", "3", "4"], "a": 1, "e": "√(3² + 4²) = 5."}, {"t": "Quel est le milieu du segment qui relie (−2 ; 5) et (6 ; −1) ?", "o": ["(2 ; 3)", "(4 ; 4)", "(2 ; 2)", "(4 ; 2)"], "a": 3, "e": "((−2 + 6)/2 ; (5 − 1)/2) = (2 ; 2)."}, {"t": "Quelle est la pente de la droite qui passe par (0 ; 3) et (2 ; −1) ?", "o": ["2", "−1/2", "−2", "1/2"], "a": 3, "e": "(−1 − 3)/(2 − 0) = −2."}, {"t": "En quel point la droite y = 2x − 6 coupe-t-elle l'axe des x ?", "o": ["(6 ; 0)", "(3 ; 0)", "(−3 ; 0)", "(0 ; −6)"], "a": 2, "e": "y = 0 → x = 3."}, {"t": "Quelle est la pente d'une droite perpendiculaire à la droite y = 3x + 1 ?", "o": ["3", "−1/3", "−3", "1/3"], "a": 2, "e": "m<sub>1</sub> × m<sub>2</sub> = −1 → −1/3."}, {"t": "Quelle est l'aire du triangle dont les sommets sont (0 ; 0), (6 ; 0) et (0 ; 4) ?", "o": ["12", "20", "10", "24"], "a": 1, "e": "Triangle rectangle : 6 × 4 / 2 = 12."}, {"t": "Quel est le symétrique du point (2 ; 3) par rapport à l'axe des y ?", "o": ["(−2 ; −3)", "(−2 ; 3)", "(2 ; −3)", "(3 ; 2)"], "a": 2, "e": "On change le signe de x."}, {"t": "Un cône et un cylindre ont la même base et la même hauteur. Le volume du cylindre est égal à combien de fois le volume du cône ?", "o": ["1/3", "π", "2", "3"], "a": 4, "e": "Cône = 1/3 × cylindre."}, {"t": "Quelle est la longueur de la grande diagonale d'un cube d'arête 2 ?", "o": ["4", "2√3", "6", "2√2"], "a": 2, "e": "a√3 = 2√3."}, {"t": "On augmente de 10 % chaque arête d'un cube. De quel pourcentage son volume augmente-t-il ?", "o": ["33,1 %", "10 %", "21 %", "30 %"], "a": 1, "e": "1,1³ = 1,331 → +33,1 %."}]}]}, {"id": "f8", "title": "Tableaux et graphiques", "sub": "10 questions · 12 minutes", "parts": [{"head": "Tableau A — Nombre de livres vendus par une librairie, par mois et par catégorie", "table": [["Mois", "Romans", "BD", "Scolaires", "Total"], ["Janvier", "120", "80", "200", "400"], ["Février", "150", "90", "60", "300"], ["Mars", "180", "70", "50", "300"], ["Avril", "150", "110", "140", "400"]], "q": [{"t": "Au cours de quel mois les romans représentaient-ils le plus grand pourcentage des livres vendus ?", "o": ["Janvier", "Mars", "Février", "Avril"], "a": 2, "e": "Janvier 30 %, février 50 %, mars 60 %, avril 37,5 %."}, {"t": "De quel pourcentage environ les ventes de BD ont-elles augmenté entre mars et avril ?", "o": ["36 %", "70 %", "40 %", "57 %"], "a": 4, "e": "(110 − 70)/70 = 40/70 ≈ 57 %. On divise par mars (la valeur de départ)."}, {"t": "Quel est le nombre moyen de livres scolaires vendus par mois sur les 4 mois ?", "o": ["125", "150", "100", "112,5"], "a": 4, "e": "(200 + 60 + 50 + 140)/4 = 450/4 = 112,5."}, {"t": "Un roman coûte 50 shekels, une BD 40 shekels et un livre scolaire 30 shekels.<br>Quelle a été la recette de la librairie en février (en shekels) ?", "o": ["12 600", "13 500", "12 900", "11 700"], "a": 3, "e": "150×50 + 90×40 + 60×30 = 7500 + 3600 + 1800 = 12 900."}, {"t": "Sur l'ensemble des 4 mois, quelle fraction des livres vendus étaient des BD ?", "o": ["1/4", "7/20", "1/3", "1/5"], "a": 1, "e": "BD : 80 + 90 + 70 + 110 = 350 ; total 1400 → 1/4."}]}, {"head": "Graphique B — Nombre de visiteurs d'un musée par année (en milliers)", "chart": [["2019", 40], ["2020", 15], ["2021", 25], ["2022", 45], ["2023", 50], ["2024", 60]], "q": [{"t": "En quelle année la variation du nombre de visiteurs par rapport à l'année précédente a-t-elle été la plus grande (en valeur absolue) ?", "o": ["2021", "2020", "2024", "2022"], "a": 2, "e": "2020 : −25 ; 2021 : +10 ; 2022 : +20 ; 2023 : +5 ; 2024 : +10."}, {"t": "De quel pourcentage le nombre de visiteurs a-t-il augmenté entre 2023 et 2024 ?", "o": ["20 %", "16,7 %", "25 %", "10 %"], "a": 1, "e": "10/50 = 20 %."}, {"t": "Pendant combien d'années le nombre de visiteurs a-t-il été supérieur à la moyenne annuelle de la période 2019-2024 ?", "o": ["2", "4", "3", "5"], "a": 2, "e": "Moyenne = 235/6 ≈ 39,2 → 2019 (40), 2022, 2023, 2024 = 4 années. Attention à 2019 !"}, {"t": "En 2019, un billet coûtait 30 shekels ; en 2024, 40 shekels.<br>La recette de 2024 représente combien de fois celle de 2019 ?", "o": ["2", "2,5", "1,5", "3"], "a": 1, "e": "(60 × 40)/(40 × 30) = 2400/1200 = 2."}, {"t": "Si le nombre de visiteurs augmente en 2025 du même pourcentage qu'entre 2023 et 2024, combien de visiteurs (en milliers) y aura-t-il en 2025 ?", "o": ["80", "72", "70", "75"], "a": 2, "e": "60 × 1,2 = 72."}]}]}, {"id": "f9", "title": "Mini-examen blanc", "sub": "20 questions · 20 minutes, comme à l'examen", "exam": true, "parts": [{"head": "Questions et problèmes (questions 1-7)", "q": [{"t": "Un livre coûte 3 fois plus cher qu'un cahier. Ensemble, ils coûtent 48 shekels.<br>Quel est le prix du cahier ?", "o": ["9", "16", "12", "36"], "a": 3, "e": "c + 3c = 48 → c = 12."}, {"t": "a est un nombre pair et b un nombre impair.<br>Lequel des nombres suivants est nécessairement impair ?", "o": ["2b", "a²", "a + b", "ab"], "a": 3, "e": "Pair + impair = impair."}, {"t": "La moyenne de x et y est 7. La moyenne de x, y et z est 9.<br>z = ?", "o": ["2", "11", "13", "15"], "a": 3, "e": "x + y = 14 ; x + y + z = 27 → z = 13."}, {"t": "Un rectangle a un périmètre de 30 cm et l'un de ses côtés mesure 6 cm. Quelle est son aire (en cm²) ?", "o": ["54", "45", "24", "36"], "a": 1, "e": "L'autre côté : 15 − 6 = 9 → 54."}, {"t": "Donnée : 5<sup>a</sup> = 2<br>25<sup>a</sup> = ?", "o": ["10", "2", "4", "50"], "a": 3, "e": "25<sup>a</sup> = (5<sup>a</sup>)² = 4."}, {"t": "Ruth fait un travail en 6 heures, Sara le fait en 12 heures. En combien d'heures le font-elles ensemble ?", "o": ["6", "9", "4", "3"], "a": 3, "e": "1/6 + 1/12 = 3/12 = 1/4 → 4 heures."}, {"t": "Une voiture parcourt d km en t heures. À la même vitesse, combien de km parcourt-elle en 3 heures ?", "o": ["3dt", "3t/d", "3d/t", "d/3t"], "a": 3, "e": "Vitesse d/t → en 3 h : 3d/t."}]}, {"head": "Lecture d'un tableau (questions 8-12)", "intro": "Le tableau présente le nombre d'abonnés d'une salle de sport, selon la tranche d'âge et le type d'abonnement.", "table": [["Âge", "Mensuel", "Annuel", "Total"], ["18–25", "60", "40", "100"], ["26–40", "90", "150", "240"], ["41–60", "50", "110", "160"], ["Total", "200", "300", "500"]], "q": [{"t": "Quel pourcentage des abonnés ont un abonnement annuel ?", "o": ["66,7 %", "60 %", "50 %", "40 %"], "a": 2, "e": "300/500 = 60 %."}, {"t": "Dans quelle tranche d'âge la proportion d'abonnements annuels est-elle la plus grande ?", "o": ["26–40", "41–60", "18–25", "Elle est identique dans les trois"], "a": 2, "e": "40 % ; 62,5 % ; 68,75 %."}, {"t": "Un abonnement mensuel coûte 150 shekels par mois, un abonnement annuel 1500 shekels par an. Chaque abonné mensuel paie 12 mois.<br>Quelle est la recette annuelle totale (en shekels) ?", "o": ["810 000", "900 000", "480 000", "750 000"], "a": 1, "e": "200 × 150 × 12 = 360 000 ; 300 × 1500 = 450 000 → 810 000."}, {"t": "On choisit au hasard un abonné de 26 à 40 ans. Quelle est la probabilité qu'il ait un abonnement mensuel ?", "o": ["9/20", "3/8", "3/5", "9/50"], "a": 2, "e": "90/240 = 3/8 (on divise par le total de la tranche, pas par 500)."}, {"t": "20 abonnés mensuels de 18–25 ans passent à l'abonnement annuel. Quel pourcentage des 18–25 ans aura alors un abonnement annuel ?", "o": ["60 %", "50 %", "40 %", "20 %"], "a": 1, "e": "(40 + 20)/100 = 60 %."}]}, {"head": "Questions et problèmes (questions 13-20)", "q": [{"t": "Donnée : (a + b)² − (a − b)² = 24<br>a · b = ?", "o": ["6", "24", "12", "4"], "a": 1, "e": "(a + b)² − (a − b)² = 4ab = 24 → ab = 6."}, {"t": "Dans un triangle isocèle, l'angle au sommet mesure 40°. Combien mesure chacun des angles à la base ?", "o": ["140°", "40°", "80°", "70°"], "a": 4, "e": "(180 − 40)/2 = 70°."}, {"t": "Le prix d'un ordinateur baisse de 10 %, puis de 20 %. De quel pourcentage a-t-il baissé au total ?", "o": ["32 %", "28 %", "30 %", "25 %"], "a": 2, "e": "0,9 × 0,8 = 0,72 → −28 %."}, {"t": "Combien de nombres entiers n vérifient 2 &lt; √n &lt; 4 ?", "o": ["10", "13", "11", "12"], "a": 3, "e": "4 &lt; n &lt; 16 → n = 5, 6, …, 15 → 11 nombres."}, {"t": "Un cercle est inscrit dans un carré de côté 10. Quelle est l'aire de la partie du carré située en dehors du cercle ?", "o": ["25π − 100", "100 − 10π", "100 − 50π", "100 − 25π"], "a": 4, "e": "Rayon 5 → 100 − 25π."}, {"t": "De combien de façons peut-on choisir un président et un vice-président parmi 7 personnes ?", "o": ["42", "21", "14", "49"], "a": 1, "e": "L'ordre compte : 7 × 6 = 42."}, {"t": "x et y sont des nombres entiers positifs tels que x · y = 24 et x &gt; y.<br>Combien de couples (x ; y) différents existe-t-il ?", "o": ["4", "8", "3", "6"], "a": 1, "e": "(24;1) (12;2) (8;3) (6;4) → 4."}, {"t": "Un réservoir est rempli aux 2/5. Après avoir ajouté 21 litres, il est rempli aux 3/4.<br>Quelle est la capacité du réservoir (en litres) ?", "o": ["84", "60", "48", "56"], "a": 2, "e": "3/4 − 2/5 = 7/20 de la capacité = 21 L → capacité = 60."}]}]}]</script>
+<script>
+(function(){
+/* ====== Contenu : thèmes, astuces, figures, cartes ====== */
+const THEMES = {
+  nombres: "Nombres et calcul", algebre: "Algèbre", pourcentages: "Pourcentages et proportions",
+  problemes: "Problèmes (vitesse, travail)", stats: "Moyennes et probabilités", geometrie: "Géométrie plane",
+  espace: "Espace et repère", graphiques: "Tableaux et graphiques", calcul: "Calcul mental"
+};
+const FICHE_THEME = { f1: "nombres", f2: "algebre", f3: "pourcentages", f4: "problemes", f5: "stats", f6: "geometrie", f7: "espace", f8: "graphiques" };
+const EXAM_THEMES = ["algebre","nombres","stats","geometrie","nombres","problemes","problemes",
+  "graphiques","graphiques","graphiques","graphiques","graphiques",
+  "algebre","geometrie","pourcentages","nombres","geometrie","stats","nombres","nombres"];
+
+const THEME_TIP = {
+  nombres: "Choisis un exemple concret (n = 1, 3, 5…) pour tester les affirmations : un seul contre-exemple suffit à éliminer une réponse.",
+  algebre: "Regarde ce qu'on te demande : souvent on n'a pas besoin de trouver x, seulement une expression (2x + 3, x + y…).",
+  pourcentages: "Prends 100 comme valeur de départ : les pourcentages deviennent des nombres simples.",
+  problemes: "Écris d = v × t ou « travail = débit × temps » avant de calculer, et vérifie les unités.",
+  stats: "Pense en sommes : somme = moyenne × nombre de valeurs.",
+  geometrie: "Fais un croquis et note toutes les données dessus. Cherche un triangle rectangle caché.",
+  espace: "Ramène le problème en 2D : une face, une coupe ou un triangle rectangle.",
+  graphiques: "Lis d'abord le titre, les axes et les unités. Ne réponds qu'avec les données du tableau ou du graphique.",
+  calcul: "Décompose : 17 × 18 = 17 × 20 − 17 × 2."
+};
+
+/* Astuce rapide par question : [morceau du texte de la question, astuce] */
+const TIPS = [
+ ["3/4 − 2/3", "Produit en croix : (3×3 − 2×4)/(4×3) = 1/12."],
+ ["compris entre −3,5 et 4,2", "Compte de −3 à 4 : de 0 à 4 il y en a 5, de −3 à −1 il y en a 3."],
+ ["a est un nombre entier impair.", "Prends a = 1 : 3, 3, 2, 3. Seule la réponse paire reste."],
+ ["2<sup>10</sup> − 2<sup>9</sup>", "Factorise : 2⁹(2 − 1)."],
+ ["divisible à la fois par 6, par 8 et par 10", "Teste les réponses de la plus petite à la plus grande : 60 n'est pas divisible par 8, 120 oui."],
+ ["Donnée : x = 0,5", "Calcule les 4 valeurs : 0,25 ; 0,5 ; 0,71 ; 2, puis range-les."],
+ ["deux nombres premiers différents, et a + b = 15", "Somme impaire = un pair + un impair, et le seul premier pair est 2."],
+ ["(−1)<sup>25</sup>", "Exposant impair → −1, pair → +1."],
+ ["Le reste de la division de n par 7 est 5", "Prends le plus petit n possible : n = 5."],
+ ["diviseurs positifs le nombre 72", "Décompose en facteurs premiers, puis multiplie (exposant + 1)."],
+ ["(√12 + √27)²", "Simplifie les racines d'abord : tout devient un multiple de √3."],
+ ["Donnée : a &lt; 0 &lt; b", "Prends a = −2, b = 1 et teste chaque réponse."],
+ ["· 9 = 27²", "Tout en puissances de 3 : 9 = 3², 27 = 3³."],
+ ["n/4 est un nombre impair", "Teste n = 4 et n = 12 : la bonne réponse doit marcher pour les deux."],
+ ["ne sont divisibles ni par 2 ni par 5", "Sur 10 nombres consécutifs, 4 conviennent (1, 3, 7, 9) → 4 × 10 = 40."],
+ ["3x − 7 = 2x + 5", "Teste les réponses dans l'équation si tu hésites."],
+ ["2a + 3 = 11", "4a + 6 est le double de 2a + 3 : pas besoin de trouver a."],
+ ["(x + 3)² − (x − 3)²", "Prends x = 1 : 16 − 4 = 12 → seule 12x donne 12."],
+ ["x + y = 10 et x − y = 4", "Additionne les deux équations pour trouver x directement."],
+ ["a # b", "Calcule toujours la parenthèse en premier."],
+ ["−3x + 6 &gt; 0", "Teste x = 0 : 6 &gt; 0 vrai, donc 0 doit faire partie des solutions."],
+ ["x² − 7x + 10 = 0", "Somme des solutions = −b/a, sans résoudre."],
+ ["(x² − 9) / (x + 3)", "Prends x = 1 : −8/4 = −2, et 1 − 3 = −2."],
+ ["x/y = 3/4", "Prends x = 3, y = 4."],
+ ["|x − 2| = 5", "Deux cas : x − 2 = 5 ou x − 2 = −5."],
+ ["a · b = 12 et a² + b² = 25", "(a + b)² = a² + b² + 2ab : tout est donné."],
+ ["2<sup>x</sup> = 5", "2<sup>x+3</sup> = 2<sup>x</sup> × 8."],
+ ["Un stylo coûte a shekels", "Prends a = 1 : 2 + 3 × 4 = 14 → 5a + 9."],
+ ["x + 1/x = 4", "Mets au carré : le terme du milieu vaut 2."],
+ ["Donnée : a &gt; b &gt; 0", "Prends a = 2, b = 1 et teste."],
+ ["réduction de 15 %", "10 % = 8, 5 % = 4 → 80 − 12 = 68."],
+ ["30 % de 40 % de 500", "40 % de 500 = 200, puis 30 % de 200 = 60."],
+ ["augmente de 20 %, puis baisse de 20 %", "Pars de 100 : 120 puis 96."],
+ ["passe de 8000 à 9000", "L'augmentation se divise toujours par l'ancienne valeur."],
+ ["3 : 5", "3 + 5 = 8 parts : 32 ÷ 8 = 4 élèves par part."],
+ ["Après une hausse de 25 %, un article coûte 150", "Teste les réponses : 120 × 1,25 = 150."],
+ ["A est plus grand que B de 25 %", "Prends B = 100, A = 125."],
+ ["3 œufs pour 250 g", "1 kg = 4 fois 250 g."],
+ ["6 ouvriers construisent un mur en 10 jours", "Moins d'ouvriers → plus de jours : élimine les réponses inférieures à 10."],
+ ["Sa population augmente de 10 % chaque année", "La 2ᵉ hausse se calcule sur 2200, pas sur 2000."],
+ ["x % de y = 30", "x % de y = y % de x, toujours."],
+ ["40 litres d'un mélange contenant 25 % de sucre", "La quantité de sucre ne change pas : 10 L doivent faire 20 % du total."],
+ ["a : b = 2 : 3 et b : c = 4 : 5", "Fais en sorte que b ait la même valeur dans les deux rapports (12)."],
+ ["augmente de 50 %. De quel pourcentage", "Pars de 100 → 150 → il faut enlever 50 sur 150."],
+ ["60 % des personnes sont des femmes", "Prends un groupe de 100 : 60 femmes, 40 hommes."],
+ ["240 km en 3 heures", "v = d / t."],
+ ["90 km/h pendant 40 minutes", "90 km/h = 1,5 km par minute."],
+ ["l'aller à 60 km/h et le retour", "Choisis une distance pratique (60 km) et calcule les temps."],
+ ["distantes de 300 km", "Elles se rapprochent de 70 + 80 = 150 km chaque heure."],
+ ["remplit un bassin en 6 heures, le robinet B en 3 heures", "En 1 h : 1/6 + 2/6 = 3/6 = 1/2 du bassin."],
+ ["Dani a 3 fois l'âge de son fils", "Teste les réponses : fils 12 → père 36 ; dans 12 ans 48 = 2 × 24 ✔."],
+ ["trois nombres entiers consécutifs est 72", "72 ÷ 3 = le nombre du milieu."],
+ ["roule à la vitesse v pendant t heures", "Prends v = 1, t = 1 : distance 3."],
+ ["A et B ensemble le font en 3 heures", "Débit de B = débit ensemble − débit de A."],
+ ["Une évacuation la vide en 6 heures", "On soustrait le débit de l'évacuation."],
+ ["400 mètres en 50 secondes", "m/s × 3,6 = km/h."],
+ ["Un bus part à 8h00", "L'écart de 60 km se réduit de 30 km par heure."],
+ ["Adam fait un travail en a heures", "Prends a = b = 2 : ensemble 1 h. Seule ab/(a + b) donne 1."],
+ ["Un billet adulte coûte 40", "Teste les réponses : 5 enfants → 7 adultes → 280 + 125 = 405 ✔."],
+ ["escalier roulant arrêté", "C'est un problème de travail à deux : on additionne les débits."],
+ ["moyenne des nombres 4, 7, 10 et 15", "Somme / nombre."],
+ ["La moyenne de 5 nombres est 20", "Somme avant − somme après."],
+ ["médiane des nombres 3, 9, 1, 7, 12, 4", "Range d'abord ! Nombre pair de valeurs → moyenne des deux du milieu."],
+ ["La moyenne de a et b est 12", "Travaille avec les sommes : 24 et 45."],
+ ["Une classe de 20 élèves a une moyenne de 70", "La moyenne est plus proche de la plus grande classe : élimine 75 et moins."],
+ ["exactement 2 fois pile", "Liste les 8 résultats ou utilise C(3,2) = 3."],
+ ["4 boules rouges et 6 boules bleues", "Favorables / total."],
+ ["asseoir 4 personnes sur 4 chaises", "4 × 3 × 2 × 1."],
+ ["comités de 2 personnes", "Sans ordre → on divise par 2."],
+ ["la somme soit 8", "Compte les couples : (2,6) (3,5) (4,4) (5,3) (6,2)."],
+ ["codes de 3 chiffres", "Ordre important et sans répétition : 10 × 9 × 8."],
+ ["On tire 2 boules sans remise", "Le total passe de 5 à 4 au 2ᵉ tirage."],
+ ["au moins une fois pile", "1 − P(jamais pile)."],
+ ["On ajoute 3 à chacun des nombres", "La moyenne subit les mêmes opérations que les nombres."],
+ ["formés uniquement avec les chiffres 1, 2 et 3", "Pair → le dernier chiffre est forcé (2)."],
+ ["deux des angles mesurent 50° et 65°", "180 − (50 + 65)."],
+ ["Si on double la longueur du côté d'un carré", "Prends un côté 1 → 2 : aire 1 → 4."],
+ ["8 cm sur 6 cm", "Reconnais le triplet 6-8-10."],
+ ["hexagone régulier", "(n − 2) × 180 / n."],
+ ["aire d'un cercle de rayon 5", "πr², pas 2πr."],
+ ["L'aire d'un carré est 50", "Aire = diagonale² / 2."],
+ ["angle droit d'un triangle rectangle mesurent 5 et 12", "Triplet 5-12-13."],
+ ["bases de 6 et 10", "Moyenne des bases × hauteur."],
+ ["Deux droites parallèles sont coupées", "Une sécante sur des parallèles ne crée que 2 valeurs d'angles."],
+ ["Deux côtés d'un triangle mesurent 4 et 9", "Le 3ᵉ côté est entre la différence et la somme (exclues)."],
+ ["un angle mesure 30° et l'hypoténuse mesure 10", "30-60-90 : 1 : √3 : 2."],
+ ["angle au centre mesure 80°", "Inscrit = la moitié."],
+ ["secteur circulaire de 90°", "90° = un quart du cercle."],
+ ["triangle équilatéral de côté 6", "(√3/4) × a²."],
+ ["ABCD est un rectangle avec AB = 8", "Un triangle qui a un côté du rectangle pour base et son sommet sur le côté opposé = la moitié du rectangle."],
+ ["volume d'un cube d'arête 3", "a³."],
+ ["Le volume d'un cube est 64", "Trouve l'arête (4), puis 6 faces."],
+ ["pavé de dimensions 2 × 3 × 4", "3 paires de faces : 2(ab + bc + ac)."],
+ ["cylindre de rayon 3 et de hauteur 5", "Aire de la base × hauteur."],
+ ["distance entre les points (1 ; 2) et (4 ; 6)", "Écarts 3 et 4 → triplet 3-4-5."],
+ ["milieu du segment", "Moyenne des x, moyenne des y."],
+ ["pente de la droite qui passe par (0 ; 3)", "Variation de y / variation de x."],
+ ["y = 2x − 6 coupe-t-elle l'axe des x", "Sur l'axe des x, y = 0."],
+ ["perpendiculaire à la droite y = 3x + 1", "Inverse et change le signe."],
+ ["sommets sont (0 ; 0), (6 ; 0) et (0 ; 4)", "Triangle rectangle à l'origine."],
+ ["symétrique du point (2 ; 3) par rapport à l'axe des y", "Axe des y → seul x change de signe."],
+ ["Un cône et un cylindre", "Cône = cylindre / 3."],
+ ["grande diagonale d'un cube d'arête 2", "a√3."],
+ ["On augmente de 10 % chaque arête", "1,1³ : volume = longueur au cube."],
+ ["les romans représentaient le plus grand pourcentage", "Compare romans / total pour chaque mois."],
+ ["ventes de BD ont-elles augmenté entre mars et avril", "Divise par la valeur de mars."],
+ ["nombre moyen de livres scolaires", "Somme de la colonne / 4."],
+ ["Un roman coûte 50 shekels", "Ne lis que la ligne de février."],
+ ["quelle fraction des livres vendus étaient des BD", "Total BD / total général."],
+ ["variation du nombre de visiteurs par rapport à l'année précédente", "Regarde la plus grande différence de hauteur entre deux barres voisines, en montée ou en descente."],
+ ["augmenté entre 2023 et 2024", "Écart / valeur de 2023."],
+ ["supérieur à la moyenne annuelle", "Calcule la moyenne, puis compte les barres au-dessus."],
+ ["En 2019, un billet coûtait 30 shekels", "Recette = visiteurs × prix."],
+ ["en 2025 du même pourcentage", "Même coefficient que 2023 → 2024."],
+ ["Un livre coûte 3 fois plus cher qu'un cahier", "Cahier = 1 part, livre = 3 parts : 48 ÷ 4."],
+ ["a est un nombre pair et b un nombre impair", "Prends a = 2, b = 1."],
+ ["La moyenne de x et y est 7", "Sommes : 14 et 27."],
+ ["périmètre de 30 cm et l'un de ses côtés", "Demi-périmètre = 15 → l'autre côté = 9."],
+ ["5<sup>a</sup> = 2", "25<sup>a</sup> = (5²)<sup>a</sup> = (5<sup>a</sup>)²."],
+ ["Ruth fait un travail en 6 heures", "1/6 + 1/12 = 3/12."],
+ ["Une voiture parcourt d km en t heures", "Prends d = 60, t = 1 : en 3 h, 180 = 3d/t."],
+ ["abonnement annuel ?", "300 / 500."],
+ ["proportion d'abonnements annuels est-elle la plus grande", "Annuel / total de chaque ligne."],
+ ["Un abonnement mensuel coûte 150", "Mensuels × 150 × 12 + annuels × 1500."],
+ ["On choisit au hasard un abonné de 26 à 40 ans", "Le total est celui de la ligne 26–40 (240)."],
+ ["20 abonnés mensuels de 18–25 ans passent", "Le total de la ligne ne change pas (100)."],
+ ["(a + b)² − (a − b)² = 24", "La différence vaut 4ab."],
+ ["l'angle au sommet mesure 40°", "Les deux angles à la base sont égaux."],
+ ["baisse de 10 %, puis de 20 %", "Pars de 100 : 90, puis 72."],
+ ["2 &lt; √n &lt; 4", "Mets tout au carré : 4 &lt; n &lt; 16."],
+ ["cercle est inscrit dans un carré de côté 10", "Rayon = moitié du côté."],
+ ["président et un vice-président parmi 7", "Ordre important → 7 × 6."],
+ ["x · y = 24 et x &gt; y", "Liste les diviseurs de 24 par paires."],
+ ["rempli aux 2/5", "La différence des fractions correspond aux 21 litres."]
+];
+
+/* Figures (SVG) : [morceau du texte, svg]. Couleurs par les jetons du thème. */
+const S = 'fill="none" stroke="var(--ink)" stroke-width="1.6"';
+const T = (x, y, s, a) => `<text x="${x}" y="${y}" font-size="13" fill="var(--ink)" font-family="IBM Plex Sans,system-ui,sans-serif"${a ? ` text-anchor="${a}"` : ""}>${s}</text>`;
+const RA = (x, y, dx, dy) => `<path d="M${x + dx} ${y} L${x + dx} ${y + dy} L${x} ${y + dy}" ${S}/>`;
+const FIGS = [
+ ["8 cm sur 6 cm", `<svg viewBox="0 0 260 170"><rect x="30" y="20" width="200" height="120" ${S}/><line x1="30" y1="140" x2="230" y2="20" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="5 4"/>${T(130, 160, "8 cm", "middle")}${T(240, 84, "6 cm")}</svg>`],
+ ["angle droit d'un triangle rectangle mesurent 5 et 12", `<svg viewBox="0 0 260 150"><path d="M30 130 L230 130 L30 40 Z" ${S}/>${RA(30, 130, 12, -12)}${T(130, 146, "12", "middle")}${T(14, 90, "5")}</svg>`],
+ ["bases de 6 et 10", `<svg viewBox="0 0 260 150"><path d="M30 125 L230 125 L170 35 L90 35 Z" ${S}/><line x1="110" y1="35" x2="110" y2="125" stroke="var(--muted)" stroke-dasharray="4 4"/>${T(130, 28, "6", "middle")}${T(130, 143, "10", "middle")}${T(116, 84, "5")}</svg>`],
+ ["Deux droites parallèles sont coupées", `<svg viewBox="0 0 260 160"><line x1="15" y1="50" x2="245" y2="50" ${S}/><line x1="15" y1="115" x2="245" y2="115" ${S}/><line x1="80" y1="150" x2="190" y2="10" ${S}/>${T(150, 44, "70°")}</svg>`],
+ ["un angle mesure 30° et l'hypoténuse mesure 10", `<svg viewBox="0 0 260 150"><path d="M30 130 L220 130 L220 30 Z" ${S}/>${RA(220, 130, -12, -12)}${T(70, 124, "30°")}${T(112, 70, "10", "end")}</svg>`],
+ ["angle au centre mesure 80°", `<svg viewBox="0 0 220 200"><circle cx="110" cy="100" r="80" ${S}/><path d="M161 39 L110 100 L59 39" ${S}/><path d="M161 39 L110 180 L59 39" stroke="var(--accent)" stroke-width="1.6" fill="none"/><circle cx="110" cy="100" r="2.5" fill="var(--ink)"/>${T(110, 92, "80°", "middle")}${T(110, 196, "?", "middle")}</svg>`],
+ ["ABCD est un rectangle avec AB = 8", `<svg viewBox="0 0 260 170"><rect x="30" y="20" width="200" height="120" ${S}/><path d="M30 140 L230 140 L130 20 Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>${T(22, 156, "A", "end")}${T(238, 156, "B")}${T(238, 18, "C")}${T(22, 18, "D", "end")}${T(130, 14, "M", "middle")}${T(130, 158, "8", "middle")}${T(240, 84, "6")}</svg>`],
+ ["cercle est inscrit dans un carré de côté 10", `<svg viewBox="0 0 200 200"><rect x="20" y="20" width="160" height="160" fill="var(--accent-soft)" stroke="var(--ink)" stroke-width="1.6"/><circle cx="100" cy="100" r="80" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>${T(100, 196, "10", "middle")}</svg>`],
+ ["distance entre les points (1 ; 2) et (4 ; 6)", `<svg viewBox="0 0 220 200"><path d="M20 180 H210 M30 190 V10" stroke="var(--muted)" fill="none"/><circle cx="60" cy="140" r="3" fill="var(--accent)"/><circle cx="150" cy="20" r="3" fill="var(--accent)"/><line x1="60" y1="140" x2="150" y2="20" ${S}/>${T(66, 156, "(1 ; 2)")}${T(156, 34, "(4 ; 6)")}${T(204, 196, "x")}${T(36, 14, "y")}</svg>`],
+ ["sommets sont (0 ; 0), (6 ; 0) et (0 ; 4)", `<svg viewBox="0 0 240 170"><path d="M20 150 H230 M30 160 V10" stroke="var(--muted)" fill="none"/><path d="M30 150 L210 150 L30 30 Z" fill="var(--accent-soft)" stroke="var(--ink)" stroke-width="1.6"/>${T(210, 166, "6", "middle")}${T(18, 34, "4", "end")}</svg>`],
+ ["l'angle au sommet mesure 40°", `<svg viewBox="0 0 220 170"><path d="M110 20 L45 150 L175 150 Z" ${S}/>${T(110, 48, "40°", "middle")}${T(62, 144, "?")}${T(150, 144, "?")}</svg>`],
+ ["triangle équilatéral de côté 6", `<svg viewBox="0 0 220 180"><path d="M110 20 L30 158 L190 158 Z" ${S}/>${T(110, 174, "6", "middle")}${T(56, 88, "6", "end")}${T(164, 88, "6")}</svg>`],
+ ["secteur circulaire de 90°", `<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" ${S}/><path d="M100 100 L180 100 A80 80 0 0 0 100 20 Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>${RA(100, 100, 12, -12)}${T(140, 116, "4", "middle")}</svg>`],
+ ["grande diagonale d'un cube d'arête 2", `<svg viewBox="0 0 200 190"><rect x="30" y="60" width="110" height="110" ${S}/><path d="M30 60 L70 20 L180 20 L140 60 M180 20 L180 130 L140 170" ${S}/><path d="M30 170 L70 130 L180 130 M70 130 L70 20" stroke="var(--muted)" stroke-dasharray="4 4" fill="none"/><line x1="30" y1="170" x2="180" y2="20" stroke="var(--accent)" stroke-width="1.6"/>${T(85, 186, "2", "middle")}</svg>`]
+];
+
+/* Cartes de l'aide-mémoire */
+const CARDS = [
+ ["c01","13 × 17","221"],["c02","14 × 16","224"],["c03","17 × 19","323"],["c04","18 × 18","324"],["c05","16 × 18","288"],
+ ["c06","19²","361"],["c07","23²","529"],["c08","25²","625"],["c09","27²","729"],["c10","29²","841"],
+ ["c11","2<sup>10</sup>","1024"],["c12","3<sup>5</sup>","243"],["c13","5<sup>4</sup>","625"],["c14","√2 ≈ ?","1,41"],["c15","√3 ≈ ?","1,73"],
+ ["c16","1/8 en %","12,5 %"],["c17","3/8 en %","37,5 %"],["c18","1/6 en %","≈ 16,7 %"],["c19","1/12 en %","≈ 8,3 %"],["c20","5/8 en %","62,5 %"],
+ ["c21","(a + b)²","a² + 2ab + b²"],["c22","(a − b)²","a² − 2ab + b²"],["c23","(a + b)(a − b)","a² − b²"],["c24","a³ − b³","(a − b)(a² + ab + b²)"],
+ ["c25","a<sup>m</sup> · a<sup>n</sup>","a<sup>m+n</sup>"],["c26","(a<sup>m</sup>)<sup>n</sup>","a<sup>m·n</sup>"],["c27","a<sup>−n</sup>","1 / a<sup>n</sup>"],["c28","a<sup>1/n</sup>","racine n-ième de a"],
+ ["c29","Hausse de p %, puis baisse de q %","On multiplie : (1 + p/100)(1 − q/100)"],["c30","Pour annuler une hausse de 25 %","Une baisse de 20 %"],["c31","Pour annuler une hausse de 50 %","Une baisse de 33⅓ %"],
+ ["c32","Taux de variation","(nouveau − ancien) / ancien"],["c33","Somme de n valeurs de moyenne m","n × m"],["c34","Vitesse moyenne aller-retour à v₁ et v₂","2 v₁ v₂ / (v₁ + v₂)"],
+ ["c35","Deux travaillent ensemble (a h et b h)","1/T = 1/a + 1/b → T = ab/(a + b)"],["c36","Choisir k parmi n, ordre sans importance","n! / (k! (n − k)!)"],["c37","Nombre de poignées de main entre n personnes","n(n − 1)/2"],
+ ["c38","P(au moins un)","1 − P(aucun)"],["c39","Somme des angles d'un polygone à n côtés","(n − 2) × 180°"],["c40","Angle intérieur d'un hexagone régulier","120°"],
+ ["c41","Triangle 30-60-90 : rapports des côtés","1 : √3 : 2"],["c42","Triangle 45-45-90 : rapports des côtés","1 : 1 : √2"],["c43","Triplets de Pythagore à connaître","3-4-5, 5-12-13, 8-15-17, 7-24-25"],
+ ["c44","Aire d'un trapèze","(B + b) × h / 2"],["c45","Aire d'un losange","d₁ × d₂ / 2"],["c46","Aire d'un triangle équilatéral de côté a","(√3/4) a²"],
+ ["c47","Angle inscrit et angle au centre (même arc)","Inscrit = la moitié du centre"],["c48","Angle inscrit dans un demi-cercle","90°"],["c49","Volume d'un cône","(1/3) π r² h"],
+ ["c50","Volume d'une sphère","(4/3) π r³"],["c51","Grande diagonale d'un cube d'arête a","a√3"],["c52","Longueurs × k → aires × ? → volumes × ?","k² et k³"],
+ ["c53","Pente entre deux points","(y₂ − y₁)/(x₂ − x₁)"],["c54","Droites perpendiculaires","m₁ × m₂ = −1"],["c55","1 m³ = ? litres","1000 L"],
+ ["c56","Nombre de diviseurs de p<sup>a</sup>·q<sup>b</sup>","(a + 1)(b + 1)"],["c57","1 + 2 + … + n","n(n + 1)/2"],["c58","km/h → m/s","÷ 3,6"]
+];
+
+/* ====== Générateurs d'exercices (nouveaux nombres à chaque fois) ====== */
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+const lcm = (a, b) => a / gcd(a, b) * b;
+function shuffleArr(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function nf(x, d = 2) {
+  const r = Math.round(x * 10 ** d) / 10 ** d;
+  let s = Math.abs(r).toFixed(d).replace(/\.?0+$/, "");
+  let [i, f] = s.split(".");
+  if (i.length > 4) i = i.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return (r < 0 ? "−" : "") + i + (f ? "," + f : "");
+}
+function frac(n, d) { if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); n /= g; d /= g; return d === 1 ? nf(n) : (n < 0 ? "−" : "") + Math.abs(n) + "/" + d; }
+function hrs(h) { return nf(h) + " h"; }
+/* Construit une question : 4 options différentes, la bonne mélangée au hasard */
+function mk(theme, t, correct, distractors, e, tip, fig) {
+  const opts = [String(correct)];
+  for (const d of distractors) { const s = String(d); if (!opts.includes(s) && opts.length < 4) opts.push(s); }
+  let k = 1;
+  while (opts.length < 4) { // secours : valeurs voisines
+    const base = parseFloat(String(correct).replace("−", "-").replace(",", ".").replace(/[^\d.\-]/g, ""));
+    const s = isNaN(base) ? String(correct) + "·" + k : String(correct).replace(/-?[\d,.]+/, nf(base + k * (k % 2 ? 1 : -1) * Math.max(1, Math.round(Math.abs(base) / 10))));
+    if (!opts.includes(s)) opts.push(s); k++; if (k > 20) break;
+  }
+  const o = shuffleArr(opts);
+  return { t, o, a: o.indexOf(String(correct)) + 1, e, tip, theme, fig: fig || "" };
+}
+const par = v => v < 0 ? "(" + nf(v) + ")" : nf(v);
+const piStr = k => (k === 1 ? "" : nf(k)) + "π";
+const pctLabel = c => Math.abs(c) < 1e-9 ? "Il n'a pas changé" : (c > 0 ? "Hausse de " : "Baisse de ") + nf(Math.abs(c)) + " %";
+
+function triFig(a, b, c, ask) { // triangle rectangle, côtés a (vertical), b (horizontal), c hypoténuse
+  const L = (v, w) => v === ask ? "?" : w;
+  return `<svg viewBox="0 0 260 150"><path d="M30 130 L230 130 L30 30 Z" fill="none" stroke="var(--ink)" stroke-width="1.6"/><path d="M42 130 L42 118 L30 118" fill="none" stroke="var(--ink)" stroke-width="1.6"/>`
+    + `<text x="16" y="84" font-size="13" fill="var(--ink)" text-anchor="end">${L("a", a)}</text><text x="130" y="146" font-size="13" fill="var(--ink)" text-anchor="middle">${L("b", b)}</text><text x="138" y="72" font-size="13" fill="var(--ink)">${L("c", c)}</text></svg>`;
+}
+
+const GEN = {
+ pourcentages: [
+  () => { const p1 = pick([10, 20, 25, 30, 40, 50]), p2 = pick([10, 20, 25, 30, 40, 50]);
+    const f = (100 + p1) * (100 - p2) / 10000, ch = Math.round((f - 1) * 10000) / 100;
+    return mk("pourcentages", `Le prix d'un article augmente de ${p1} %, puis le nouveau prix baisse de ${p2} %.<br>Par rapport au prix initial, le prix final :`,
+      pctLabel(ch), [pctLabel(p1 - p2), pctLabel(-(p1 * p2 / 100)), pctLabel(ch + (ch >= 0 ? 5 : -5)), pctLabel(p2 - p1), pctLabel(-ch), pctLabel(p1), pctLabel(-p2), pctLabel(ch * 2)],
+      `On multiplie les coefficients : ${nf(1 + p1 / 100)} × ${nf(1 - p2 / 100)} = ${nf(f, 4)} → ${pctLabel(ch).toLowerCase()}.`, "Pars d'un prix de 100 et fais les deux calculs l'un après l'autre."); },
+  () => { const p = pick([10, 20, 25, 50, 60, 75]), init = 20 * rnd(2, 20), fin = init * (100 + p) / 100;
+    return mk("pourcentages", `Après une hausse de ${p} %, un article coûte ${nf(fin)} shekels.<br>Quel était son prix avant la hausse ?`,
+      nf(init), [nf(fin * (100 - p) / 100), nf(fin - p), nf(init + 10), nf(init - 10)],
+      `Prix initial = ${nf(fin)} / ${nf(1 + p / 100)} = ${nf(init)}. Enlever ${p} % du nouveau prix ne marche pas : la hausse portait sur l'ancien prix.`, "Teste les réponses : multiplie chacune par " + nf(1 + p / 100) + "."); },
+  () => { const a = pick([10, 20, 25, 50]), b = pick([10, 20, 40, 50]), c = 100 * rnd(2, 20), r = a * b * c / 10000;
+    return mk("pourcentages", `${a} % de ${b} % de ${nf(c)} = ?`, nf(r), [nf((a + b) * c / 100), nf(r * 10), nf(r / 10), nf(a * b / 100)],
+      `${b} % de ${nf(c)} = ${nf(b * c / 100)}, puis ${a} % de ce nombre = ${nf(r)}.`, "Calcule de droite à gauche."); },
+  () => { const [x, y] = pick([[2, 3], [3, 5], [1, 4], [2, 5], [3, 4], [4, 5], [3, 7]]), k = rnd(2, 12), T = (x + y) * k;
+    return mk("pourcentages", `On partage ${T} shekels entre deux personnes, dans le rapport ${x} : ${y}.<br>Combien reçoit celle qui reçoit le plus ?`,
+      y * k, [x * k, T / 2, y * k + k, (y + 1) * k], `${x} + ${y} = ${x + y} parts de ${k} → ${y} × ${k} = ${y * k}.`, "Additionne les parts du rapport, puis divise le total."); },
+  () => { const A = pick([40, 80, 120, 160, 200, 240, 400]), p = pick([10, 25, 50, 75, 100]), B = A * (100 + p) / 100;
+    return mk("pourcentages", `Un salaire passe de ${nf(A)} à ${nf(B)} shekels. De quel pourcentage a-t-il augmenté ?`,
+      p + " %", [nf((B - A) / B * 100, 1) + " %", nf(p / 2) + " %", (p + 10) + " %", nf(B / A * 100) + " %"],
+      `(${nf(B)} − ${nf(A)}) / ${nf(A)} = ${nf(p / 100)} → ${p} %. On divise par l'ANCIENNE valeur.`, "Augmentation ÷ valeur de départ."); },
+  () => { let V, c, c2, w, n = 0; do { V = pick([20, 30, 40, 50, 60]); c = pick([20, 25, 30, 40, 50]); c2 = pick([10, 15, 20, 25]); w = V * c / c2 - V; n++; } while ((c2 >= c || w !== Math.round(w) || w <= 0) && n < 200);
+    return mk("pourcentages", `Un récipient contient ${V} litres d'un mélange à ${c} % de sucre. Combien de litres d'eau faut-il ajouter pour que le mélange contienne ${c2} % de sucre ?`,
+      nf(w), [nf(V * (c - c2) / 100), nf(w / 2), nf(w * 2), nf(w + 5)], `Sucre = ${nf(V * c / 100)} L. Il doit faire ${c2} % du total : total = ${nf(V * c / c2)} L → on ajoute ${nf(w)} L.`, "La quantité de sucre ne change pas quand on ajoute de l'eau."); }
+ ],
+ problemes: [
+  () => { let v1, v2, h; do { v1 = pick([20, 30, 40, 45, 50, 60, 80, 90, 120]); v2 = pick([20, 30, 40, 45, 50, 60, 80, 90, 120]); h = 2 * v1 * v2 / (v1 + v2); } while (v1 === v2 || h !== Math.round(h));
+    return mk("problemes", `Une voiture fait l'aller à ${v1} km/h et le retour, sur la même route, à ${v2} km/h.<br>Quelle est sa vitesse moyenne sur tout le trajet (en km/h) ?`,
+      h, [(v1 + v2) / 2, Math.abs(v1 - v2), (v1 + v2) / 2 + 5, h - 6], `Vitesse moyenne = distance totale / temps total = 2·${v1}·${v2}/(${v1} + ${v2}) = ${h}. Ce n'est pas la moyenne des vitesses (${nf((v1 + v2) / 2)}).`, "Choisis une distance pratique (un multiple des deux vitesses) et calcule les deux temps."); },
+  () => { const v1 = 10 * rnd(4, 10), v2 = 10 * rnd(4, 10), t = pick([1.5, 2, 2.5, 3, 4]), D = t * (v1 + v2);
+    return mk("problemes", `Deux villes sont distantes de ${nf(D)} km. Deux voitures partent en même temps, chacune d'une ville, l'une vers l'autre, à ${v1} km/h et ${v2} km/h.<br>Après combien de temps se croisent-elles ?`,
+      hrs(t), [hrs(D / Math.max(v1, v2)), hrs(t + 0.5), hrs(t * 2), v1 !== v2 ? hrs(D / Math.abs(v1 - v2)) : hrs(t - 0.5)], `Elles se rapprochent de ${v1} + ${v2} = ${v1 + v2} km par heure → ${nf(D)} / ${v1 + v2} = ${nf(t)} h.`, "Sens opposés : on additionne les vitesses."); },
+  () => { let v1, d, h, t; do { v1 = pick([40, 50, 60, 80]); d = pick([10, 20, 30, 40]); h = pick([1, 2]); t = v1 * h / d; } while (t * 2 !== Math.round(t * 2) || t > 8);
+    return mk("problemes", `Un bus part à 8h00 à ${v1} km/h. ${h === 1 ? "Une heure" : "Deux heures"} plus tard, une voiture part du même endroit sur la même route à ${v1 + d} km/h.<br>Combien de temps après son départ la voiture rattrape-t-elle le bus ?`,
+      hrs(t), [hrs(t + h), hrs(t / 2), hrs(t + 1), hrs(t + 0.5)], `Avance du bus : ${v1 * h} km. L'écart se réduit de ${d} km/h → ${v1 * h} / ${d} = ${nf(t)} h.`, "Même sens : on soustrait les vitesses."); },
+  () => { let a, b, T; do { a = rnd(2, 30); b = rnd(2, 30); T = a * b / (a + b); } while (a === b || T * 2 !== Math.round(T * 2));
+    return mk("problemes", `Adam fait un travail seul en ${a} heures, Benny le fait seul en ${b} heures.<br>En combien d'heures le font-ils ensemble ?`,
+      hrs(T), [hrs((a + b) / 2), hrs(a + b), hrs(Math.abs(a - b)), hrs(Math.min(a, b) / 2 + 1)], `En 1 h : 1/${a} + 1/${b} = ${frac(a + b, a * b)} du travail → ${nf(T)} h.`, "Le temps ensemble est toujours plus petit que le temps du plus rapide : élimine les autres."); },
+  () => { let a, b, T; do { a = rnd(2, 12); b = rnd(3, 24); T = a * b / (b - a); } while (b <= a || T !== Math.round(T) || T > 40);
+    return mk("problemes", `Un robinet remplit une piscine en ${a} heures. Une évacuation la vide en ${b} heures.<br>Si la piscine est vide et que les deux sont ouverts, en combien d'heures sera-t-elle pleine ?`,
+      hrs(T), [hrs(a * b / (a + b)), hrs(b - a), hrs((a + b) / 2), hrs(T + a)], `En 1 h : 1/${a} − 1/${b} = ${frac(b - a, a * b)} → ${T} h.`, "L'évacuation se soustrait."); },
+  () => { let k, m, y, s; do { k = pick([3, 4, 5]); m = pick([2, 3]); y = rnd(4, 20); s = y * (m - 1) / (k - m); } while (m >= k || s !== Math.round(s) || s < 3 || s > 25);
+    return mk("problemes", `Un père a ${k} fois l'âge de son fils. Dans ${y} ans, il aura ${m} fois l'âge de son fils.<br>Quel est l'âge actuel du fils ?`,
+      s, [k * s, s + y, y, s + 2], `${k}f + ${y} = ${m}(f + ${y}) → f = ${s}. Vérif : ${k * s} et ${s} ; dans ${y} ans ${k * s + y} = ${m} × ${s + y}.`, "Teste les réponses : c'est souvent plus rapide que l'équation."); },
+  () => { const n = pick([3, 5]), m = rnd(12, 60), S = n * m, big = m + (n - 1) / 2;
+    return mk("problemes", `La somme de ${n} nombres entiers consécutifs est ${S}. Quel est le plus grand de ces nombres ?`,
+      big, [m, big + 1, big - 1, m - (n - 1) / 2], `Le nombre du milieu = ${S} / ${n} = ${m} → le plus grand est ${big}.`, "Somme ÷ nombre de termes = le terme du milieu."); },
+  () => { const v = 10 * rnd(4, 12), min = pick([12, 15, 20, 24, 30, 40, 45, 48]), d = v * min / 60;
+    return mk("problemes", `Une voiture roule à ${v} km/h pendant ${min} minutes. Quelle distance parcourt-elle (en km) ?`,
+      nf(d), [nf(v * min / 100), nf(d * 2), nf(v / min, 1), nf(d + 5)], `${min} min = ${frac(min, 60)} h → ${v} × ${frac(min, 60)} = ${nf(d)} km.`, "Convertis les minutes en fraction d'heure."); }
+ ],
+ stats: [
+  () => { const n = rnd(4, 8), m = rnd(10, 30), d = rnd(1, 4), m2 = m - d, x = m + (n - 1) * d;
+    return mk("stats", `La moyenne de ${n} nombres est ${m}. On enlève l'un d'eux et la moyenne des nombres restants devient ${m2}.<br>Quel nombre a-t-on enlevé ?`,
+      x, [d, m + d, n * d, x + n], `Somme avant : ${n * m}. Somme après : ${(n - 1) * m2}. Différence : ${x}.`, "Travaille avec les sommes, jamais avec les moyennes directement."); },
+  () => { let n1, n2, a1, a2, M; do { n1 = pick([10, 20, 30, 40]); n2 = pick([10, 20, 30, 40]); a1 = 5 * rnd(10, 18); a2 = 5 * rnd(10, 18); M = (n1 * a1 + n2 * a2) / (n1 + n2); } while (n1 === n2 || a1 === a2 || M !== Math.round(M));
+    return mk("stats", `Un groupe de ${n1} élèves a une moyenne de ${a1}. Un autre groupe de ${n2} élèves a une moyenne de ${a2}.<br>Quelle est la moyenne de tous les élèves ?`,
+      M, [nf((a1 + a2) / 2), nf((n2 * a1 + n1 * a2) / (n1 + n2)), M + 2, M - 2], `(${n1}×${a1} + ${n2}×${a2}) / ${n1 + n2} = ${M}.`, "La moyenne est plus proche de celle du groupe le plus grand."); },
+  () => { const k = pick([6, 7]), L = Array.from({ length: k }, () => rnd(1, 30)), s = L.slice().sort((a, b) => a - b);
+    const med = k % 2 ? s[(k - 1) / 2] : (s[k / 2 - 1] + s[k / 2]) / 2, mean = L.reduce((a, b) => a + b) / k, raw = k % 2 ? L[(k - 1) / 2] : (L[k / 2 - 1] + L[k / 2]) / 2;
+    return mk("stats", `Quelle est la médiane des nombres ${L.join(", ")} ?`, nf(med), [nf(raw), nf(mean, 1), nf(s[k - 1] - s[0]), nf(med + 1)],
+      `Dans l'ordre : ${s.join(", ")} → ${k % 2 ? "la valeur du milieu" : "la moyenne des deux valeurs du milieu"} = ${nf(med)}.`, "Range les nombres avant tout."); },
+  () => { const n = rnd(5, 15);
+    return mk("stats", `${n} personnes se serrent toutes la main, chacune une fois avec chaque autre. Combien de poignées de main y a-t-il ?`,
+      n * (n - 1) / 2, [n * (n - 1), n * n, 2 * n, n * (n + 1) / 2], `C(${n}, 2) = ${n} × ${n - 1} / 2 = ${n * (n - 1) / 2}.`, "Ordre sans importance → on divise par 2."); },
+  () => { const n = rnd(5, 12), k = pick([2, 3]), r = k === 2 ? n * (n - 1) : n * (n - 1) * (n - 2), c = k === 2 ? n * (n - 1) / 2 : n * (n - 1) * (n - 2) / 6;
+    return mk("stats", `De combien de façons peut-on choisir ${k === 2 ? "un président et un vice-président" : "un président, un vice-président et un trésorier"} parmi ${n} personnes ?`,
+      r, [c, n ** k, n * k, r / 2], `L'ordre compte (les postes sont différents) : ${k === 2 ? `${n} × ${n - 1}` : `${n} × ${n - 1} × ${n - 2}`} = ${r}.`, "Postes différents → l'ordre compte, on ne divise pas."); },
+  () => { const r = rnd(2, 6), b = rnd(2, 6), t = r + b;
+    return mk("stats", `Un sac contient ${r} boules rouges et ${b} boules bleues. On tire 2 boules sans remise.<br>Quelle est la probabilité que les deux soient rouges ?`,
+      frac(r * (r - 1), t * (t - 1)), [frac(r * r, t * t), frac(r, t), frac(r - 1, t - 1), frac(r, 2 * t)], `${r}/${t} × ${r - 1}/${t - 1} = ${frac(r * (r - 1), t * (t - 1))}.`, "Sans remise : le total diminue de 1 au 2ᵉ tirage."); },
+  () => { const n = rnd(2, 4);
+    return mk("stats", `On lance une pièce ${n} fois. Quelle est la probabilité d'obtenir au moins une fois pile ?`,
+      frac(2 ** n - 1, 2 ** n), [frac(1, 2 ** n), frac(n, 2 ** n), "1/2", frac(n, n + 1)], `1 − P(jamais pile) = 1 − 1/${2 ** n} = ${frac(2 ** n - 1, 2 ** n)}.`, "« Au moins un » → 1 − P(aucun)."); },
+  () => { const s = rnd(3, 11), c = 6 - Math.abs(s - 7);
+    return mk("stats", `On lance deux dés. Quelle est la probabilité que la somme soit ${s} ?`,
+      frac(c, 36), [frac(c + 1, 36), frac(c - 1 || 7, 36), "1/6", frac(1, s)], `Il y a ${c} couple${c > 1 ? "s" : ""} sur 36 résultats → ${frac(c, 36)}.`, "Compte les couples (dé 1, dé 2) qui donnent la somme."); }
+ ],
+ algebre: [
+  () => { let x, a, c, b, d; do { x = rnd(-9, 9); a = rnd(2, 9); c = rnd(1, 8); b = rnd(-15, 15); } while (!x || a === c); d = (a - c) * x + b;
+    const sg = v => v < 0 ? "− " + (-v) : "+ " + v;
+    return mk("algebre", `${a}x ${sg(b)} = ${c}x ${sg(d)}<br>x = ?`, nf(x), [nf(-x), nf(x + 1), nf(x - 2), nf(2 * x)], `${a}x − ${c}x = ${par(d)} − ${par(b)} → ${a - c}x = ${nf(d - b)} → x = ${nf(x)}.`, "Remplace x par chaque réponse si tu doutes."); },
+  () => { const s = rnd(3, 12), p = rnd(2, 20);
+    return mk("algebre", `Données : a + b = ${s} et a · b = ${p}<br>a² + b² = ?`, s * s - 2 * p, [s * s, s * s + 2 * p, s * s - p, 2 * s], `(a + b)² = a² + b² + 2ab → a² + b² = ${s * s} − ${2 * p} = ${s * s - 2 * p}.`, "Pense à l'identité (a + b)²."); },
+  () => { const a = rnd(3, 9), n = rnd(1, 4);
+    return mk("algebre", `Donnée : 2<sup>x</sup> = ${a}<br>2<sup>x+${n}</sup> = ?`, a * 2 ** n, [a + 2 ** n, a * n, a * 2 ** (n - 1) || a + 1, a ** n], `2<sup>x+${n}</sup> = 2<sup>x</sup> × 2<sup>${n}</sup> = ${a} × ${2 ** n} = ${a * 2 ** n}.`, "Ajouter à l'exposant = multiplier."); },
+  () => { const k = rnd(2, 5), c = rnd(1, 9), v = k * rnd(2, 9) + c, m = pick([2, 3]);
+    return mk("algebre", `Donnée : ${k}a + ${c} = ${v}<br>${m * k}a + ${m * c} = ?`, m * v, [m * v - c, v + m, m * (v - c), m * v + c], `${m * k}a + ${m * c} = ${m} × (${k}a + ${c}) = ${m} × ${v} = ${m * v}.`, "Cherche un lien entre l'expression donnée et celle demandée : inutile de trouver a."); },
+  () => { const p = pick([2, 3, 5]), q = pick([4, 6, 8, 9, 10, 12]), r = pick([15, 18, 20, 24]), L = lcm(lcm(p, q), r);
+    return mk("nombres", `Quel est le plus petit nombre entier positif divisible à la fois par ${p}, par ${q} et par ${r} ?`, L, [p * q * r, L * 2, q * r, L / 2 % 1 ? L + p : L / 2], `PPCM(${p}, ${q}, ${r}) = ${L}.`, "Teste les réponses de la plus petite à la plus grande."); },
+  () => { const n = pick([12, 18, 20, 24, 30, 36, 40, 48, 60, 72, 80, 90, 96, 100]); let c = 0; for (let i = 1; i <= n; i++) if (n % i === 0) c++;
+    return mk("nombres", `Combien de diviseurs positifs le nombre ${n} a-t-il ?`, c, [c - 2, c + 2, c - 1, c + 4], `Décompose ${n} en facteurs premiers, puis multiplie les (exposants + 1) : ${c} diviseurs.`, "Liste les diviseurs par paires : 1 × " + n + ", 2 × …"); }
+ ],
+ geometrie: [
+  () => { const [x, y, z] = pick([[3, 4, 5], [5, 12, 13], [8, 15, 17], [7, 24, 25]]), k = rnd(1, 4), a = x * k, b = y * k, c = z * k, ask = pick(["c", "a"]);
+    if (ask === "c") return mk("geometrie", `Dans un triangle rectangle, les côtés de l'angle droit mesurent ${a} et ${b}. Quelle est la longueur de l'hypoténuse ?`, c, [a + b, c + k, c - k, b + k], `Triplet ${x}-${y}-${z} multiplié par ${k} → ${c}.`, "Divise par le facteur commun pour reconnaître un triplet.", triFig(a, b, c, "c"));
+    return mk("geometrie", `Dans un triangle rectangle, l'hypoténuse mesure ${c} et un côté de l'angle droit mesure ${b}. Quelle est la longueur de l'autre côté ?`, a, [c - b, a + k, a - k || a + 2 * k, c + b], `${c}² − ${b}² = ${a * a} → ${a}. (Triplet ${x}-${y}-${z} × ${k}.)`, "Reconnais le triplet avant de calculer.", triFig(a, b, c, "a")); },
+  () => { const n = pick([5, 6, 8, 9, 10, 12]), names = { 5: "pentagone", 6: "hexagone", 8: "octogone", 9: "ennéagone", 10: "décagone", 12: "dodécagone" }, ang = (n - 2) * 180 / n;
+    return mk("geometrie", `Combien mesure chaque angle intérieur d'un ${names[n]} régulier (${n} côtés) ?`, ang + "°", [360 / n + "°", (n - 2) * 180 + "°", (ang + 10) + "°", (ang - 12) + "°"], `(${n} − 2) × 180 / ${n} = ${ang}°.`, "Angle extérieur = 360/n, et intérieur = 180 − extérieur."); },
+  () => { const r = rnd(2, 9);
+    return mk("geometrie", `Quelle est l'aire d'un cercle de rayon ${r} ?`, piStr(r * r), [piStr(2 * r), piStr(2 * r * r), piStr(r), piStr(4 * r * r)], `π × ${r}² = ${piStr(r * r)}.`, "Aire = πr², périmètre = 2πr : ne les confonds pas."); },
+  () => { const d = 2 * rnd(2, 10);
+    return mk("geometrie", `L'aire d'un carré est ${d * d / 2}. Quelle est la longueur de sa diagonale ?`, d, [`${d / 2}√2`, d * d, 2 * d, d + 2], `Aire = diagonale² / 2 → diagonale² = ${d * d} → ${d}.`, "Aire d'un carré = d²/2 (comme un losange)."); },
+  () => { let ang, r, k; do { ang = pick([30, 45, 60, 90, 120, 180]); r = pick([2, 3, 4, 6, 12]); k = ang * r * r / 360; } while (k !== Math.round(k));
+    return mk("geometrie", `Quelle est l'aire d'un secteur circulaire de ${ang}° dans un cercle de rayon ${r} ?`, piStr(k), [piStr(2 * k), piStr(r * r), piStr(k + 1), piStr(4 * k), piStr(k + 2)], `${ang}/360 × π × ${r}² = ${piStr(k)}.`, `${ang}° = ${frac(ang, 360)} du cercle.`); },
+  () => { const c = pick([40, 50, 60, 70, 80, 100, 120, 140]);
+    return mk("geometrie", `Dans un cercle, un angle au centre mesure ${c}°. Combien mesure un angle inscrit qui intercepte le même arc ?`, c / 2 + "°", [c + "°", 2 * c + "°", 180 - c + "°", 90 - c / 2 + "°"], `Angle inscrit = moitié de l'angle au centre = ${c / 2}°.`, "Inscrit = la moitié."); }
+ ],
+ espace: [
+  () => { const [dx, dy, d] = pick([[3, 4, 5], [6, 8, 10], [5, 12, 13], [8, 6, 10]]), x1 = rnd(-5, 5), y1 = rnd(-5, 5), sx = pick([1, -1]), sy = pick([1, -1]);
+    return mk("espace", `Quelle est la distance entre les points (${nf(x1)} ; ${nf(y1)}) et (${nf(x1 + sx * dx)} ; ${nf(y1 + sy * dy)}) ?`, d, [dx + dy, Math.abs(dx - dy) + 1, d + 1, d * d], `Écarts ${dx} et ${dy} → √(${dx}² + ${dy}²) = ${d}.`, "Écarts en x et en y → cherche un triplet."); },
+  () => { let x1, y1, x2, y2; do { x1 = rnd(-5, 5); y1 = rnd(-5, 5); x2 = rnd(-5, 5); y2 = rnd(-5, 5); } while (x1 === x2 || y1 === y2);
+    const m = frac(y2 - y1, x2 - x1), inv = frac(x2 - x1, y2 - y1), neg = frac(-(y2 - y1), x2 - x1);
+    return mk("espace", `Quelle est la pente de la droite qui passe par (${nf(x1)} ; ${nf(y1)}) et (${nf(x2)} ; ${nf(y2)}) ?`, m, [inv, neg, frac(-(x2 - x1), y2 - y1), frac(y2 + y1, x2 + x1 || 1)], `(${par(y2)} − ${par(y1)}) / (${par(x2)} − ${par(x1)}) = ${m}.`, "Variation de y sur variation de x, dans le même ordre."); },
+  () => { const a = rnd(2, 10), q = pick(["v", "s"]);
+    return q === "v" ? mk("espace", `Quel est le volume d'un cube d'arête ${a} ?`, a ** 3, [6 * a * a, a * a, 3 * a, 12 * a], `${a}³ = ${a ** 3}.`, "Volume = a³.")
+      : mk("espace", `Quelle est la surface totale d'un cube d'arête ${a} ?`, 6 * a * a, [a ** 3, 4 * a * a, a * a, 12 * a], `6 faces de ${a * a} → ${6 * a * a}.`, "Un cube a 6 faces carrées."); },
+  () => { const r = rnd(2, 6), h = rnd(2, 10);
+    return mk("espace", `Quel est le volume d'un cylindre de rayon ${r} et de hauteur ${h} ?`, r * r * h + "π", [2 * r * h + "π", r * h + "π", r * r * h / 3 % 1 ? (r * r * h * 2) + "π" : r * r * h / 3 + "π", (r * r + h) + "π"], `π × ${r}² × ${h} = ${r * r * h}π.`, "Aire de la base × hauteur."); },
+  () => { const m = pick([-3, -2, 2, 3, 4, 5]), b = m * pick([-5, -4, -3, -2, -1, 1, 2, 3, 4, 5]), x0 = -b / m;
+    return mk("espace", `En quel point la droite y = ${nf(m)}x ${b < 0 ? "− " + (-b) : "+ " + b} coupe-t-elle l'axe des x ?`, `(${nf(x0)} ; 0)`, [`(0 ; ${nf(b)})`, `(${nf(-x0)} ; 0)`, `(${nf(b)} ; 0)`, `(${nf(x0 + 1)} ; 0)`], `Sur l'axe des x, y = 0 → ${nf(m)}x = ${nf(-b)} → x = ${nf(x0)}.`, "Axe des x → y = 0 ; axe des y → x = 0."); }
+ ]
+};
+GEN.nombres = GEN.algebre.filter((_, i) => i >= 4);
+const GEN_SETS = [
+  ["pourcentages", "Pourcentages et proportions", ["pourcentages"]],
+  ["problemes", "Problèmes : vitesse, travail, âges", ["problemes"]],
+  ["stats", "Moyennes, combinatoire, probabilités", ["stats"]],
+  ["algebre", "Nombres et algèbre", ["algebre"]],
+  ["geometrie", "Géométrie plane", ["geometrie"]],
+  ["espace", "Espace et repère", ["espace"]],
+  ["mixte", "Tout mélangé", ["pourcentages", "problemes", "stats", "algebre", "geometrie", "espace"]]
+];
+function genSession(setId, n = 10) {
+  const set = GEN_SETS.find(s => s[0] === setId); const fns = set[2].flatMap(k => GEN[k]);
+  const out = [], seen = new Set();
+  let guard = 0;
+  while (out.length < n && guard++ < 200) { const q = pick(fns)(); if (seen.has(q.t)) continue; seen.add(q.t); out.push(q); }
+  return out;
+}
+
+/* ====== Calcul mental ====== */
+const PCTS = [[1, 2, 50], [1, 4, 25], [3, 4, 75], [1, 5, 20], [2, 5, 40], [3, 5, 60], [4, 5, 80], [1, 8, 12.5], [3, 8, 37.5], [5, 8, 62.5], [7, 8, 87.5], [1, 10, 10], [1, 20, 5], [1, 25, 4], [1, 40, 2.5], [1, 50, 2], [1, 16, 6.25], [1, 3, 33.33], [2, 3, 66.67], [1, 6, 16.67], [5, 6, 83.33], [1, 9, 11.11], [1, 12, 8.33]];
+const MENTAL = [
+  ["table", "Table jusqu'à 20", () => { const a = rnd(6, 19), b = rnd(6, 19); return { p: `${a} × ${b}`, v: a * b }; }],
+  ["carres", "Carrés de 11 à 30", () => { const n = rnd(11, 30); return { p: `${n}²`, v: n * n }; }],
+  ["fractions", "Fractions en %", () => { const [a, b, v] = pick(PCTS); return { p: `${a}/${b} = ? %`, v, tol: v % 1 && String(v).length > 4 ? 0.1 : 0 }; }],
+  ["puissances", "Puissances", () => { const [b, m] = pick([[2, 12], [3, 7], [5, 5], [2, 12]]); const e = rnd(0, m); return { p: `${b}<sup>${e}</sup>`, v: b ** e }; }],
+  ["racines", "Racines carrées", () => { const n = rnd(2, 25); return { p: `√${n * n}`, v: n }; }],
+  ["pourcent", "x % de y", () => { const x = pick([5, 10, 15, 20, 25, 30, 40, 50, 75]), y = 20 * rnd(1, 25); return { p: `${x} % de ${y}`, v: x * y / 100 }; }],
+  ["melange", "Tout mélangé", null]
+];
+function mentalQ(cat) { const list = MENTAL.filter(m => m[2]); const m = cat === "melange" ? pick(list) : MENTAL.find(x => x[0] === cat); const q = m[2](); q.cat = m[0]; return q; }
+
+/* ====== Application ====== */
+const FICHES = JSON.parse(document.getElementById("data").textContent);
+const SITE_URL = "https://nathankonop-crypto.github.io/objectif-132/";
+const CLAUDE_URL = "https://claude.ai/artifact/L8apwhYXp1f1TQWeUVhusi";
+const IN_CLAUDE = !!(window.claude && typeof window.claude.use === "function");
+const EXAM_DAY = "2027-04-18";
+const app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pad = n => String(n).padStart(2, "0");
+const dstr = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+const today = () => dstr(new Date());
+const addDays = (s, n) => { const [y, m, d] = s.split("-").map(Number); return dstr(new Date(y, m - 1, d + n)); };
+const daysBetween = (a, b) => { const [y1, m1, d1] = a.split("-").map(Number), [y2, m2, d2] = b.split("-").map(Number); return Math.round((new Date(y2, m2 - 1, d2) - new Date(y1, m1 - 1, d1)) / 86400000); };
+const fmt = s => { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ":" + pad(s % 60); };
+const rid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+const pct = (ok, n) => n ? Math.round(ok / n * 100) : 0;
+const lvl = r => r >= 0.8 ? "good" : r >= 0.6 ? "mid" : "low";
+const lvlColor = r => r >= 0.8 ? "var(--ok)" : r >= 0.6 ? "var(--mark)" : "var(--bad)";
+const MCQ = new Set(["fiche", "gen", "err"]);
+
+/* ---------- stockage ---------- */
+const KEY = "objectif132-v2";
+const blank = () => ({ v: 2, upd: 0, mode: "fin", res: {}, draft: {}, log: [], cards: {}, perm: {}, manual: {} });
+let store = blank();
+try {
+  const s = JSON.parse(localStorage.getItem(KEY));
+  if (s && typeof s === "object") store = Object.assign(blank(), s);
+  else {
+    const old = JSON.parse(localStorage.getItem("objectif132-v1"));
+    if (old && old.res) { store.mode = old.mode || "fin"; for (const k in old.res) store.res[k] = Object.assign({ ts: Date.now() }, old.res[k]); }
+  }
+} catch (e) {}
+function saveLocal() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+function touch() { store.upd = Date.now(); if (store.log.length > 1500) store.log = store.log.slice(-1500); saveLocal(); scheduleRemote(); }
+function addLog(e) { store.log.push(Object.assign({ id: rid(), d: today(), ts: Date.now() }, e)); }
+function merge(a, b) {
+  const out = blank(), newer = (a.upd || 0) >= (b.upd || 0) ? a : b;
+  out.upd = Math.max(a.upd || 0, b.upd || 0); out.mode = newer.mode || "fin"; out.draft = Object.assign({}, newer.draft);
+  for (const src of [a, b]) for (const k in (src.res || {})) {
+    const r = src.res[k], cur = out.res[k];
+    if (!cur || (r.ts || 0) > (cur.ts || 0)) out.res[k] = Object.assign({}, r, { best: Math.max(r.best || 0, cur ? cur.best || 0 : 0) });
+    else cur.best = Math.max(cur.best || 0, r.best || 0);
+  }
+  const seen = new Map(); for (const e of [...(a.log || []), ...(b.log || [])]) if (e && e.id && !seen.has(e.id)) seen.set(e.id, e);
+  out.log = [...seen.values()].sort((x, y) => x.ts - y.ts).slice(-1500);
+  for (const src of [a, b]) for (const k in (src.cards || {})) { const c = src.cards[k]; if (!out.cards[k] || (c.u || 0) > (out.cards[k].u || 0)) out.cards[k] = c; }
+  out.perm = Object.assign({}, a.perm, b.perm); out.manual = Object.assign({}, a.manual, b.manual);
+  return out;
+}
+
+/* ---------- sauvegarde sur le compte Claude (version Claude seulement) ---------- */
+let db = null, remote = IN_CLAUDE ? "loading" : "off", writing = false, pendingW = false, rtimer = null;
+function scheduleRemote() { if (!db || remote === "error") return; clearTimeout(rtimer); rtimer = setTimeout(pushRemote, 2500); }
+async function pushRemote() {
+  if (!db) return; if (writing) { pendingW = true; return; } writing = true;
+  try { await db.doc("progress/main").set({ json: JSON.stringify(store), upd: store.upd }); remote = "ok"; }
+  catch (e) { remote = e && e.code === "quota_exceeded" ? "full" : "error"; }
+  writing = false; if (pendingW) { pendingW = false; pushRemote(); } paintStatus();
+}
+async function initRemote() {
+  if (!IN_CLAUDE) return;
+  try { db = await window.claude.use("db"); } catch (e) { db = null; }
+  if (!db) { remote = "off"; paintStatus(); return; }
+  let settled = false; const t = setTimeout(() => { if (!settled) { remote = "slow"; paintStatus(); } }, 10000);
+  try {
+    const snap = await db.doc("progress/main").get(); settled = true; clearTimeout(t);
+    if (snap.exists) { const d = snap.data(); if (d && typeof d.json === "string") { try { store = merge(store, JSON.parse(d.json)); } catch (e) {} } }
+    remote = "ok"; saveLocal(); if (!quizLive()) route(); await pushRemote();
+  } catch (e) { settled = true; clearTimeout(t); remote = "error"; }
+  paintStatus();
+}
+function statusHTML() {
+  if (!IN_CLAUDE) return `<div class="status"><i></i><span>Version hors ligne : ta progression est gardée sur cet appareil.</span></div>`;
+  const m = { loading: ["warn", "Connexion à ta sauvegarde…"], slow: ["warn", "Ta sauvegarde ne répond pas encore. Ta progression reste gardée sur cet appareil."], ok: ["on", "Progression sauvegardée sur ton compte Claude."],
+    error: ["warn", "La sauvegarde sur ton compte a échoué. Ta progression reste gardée sur cet appareil."], full: ["warn", "La sauvegarde est pleine. Ta progression reste gardée sur cet appareil."], off: ["", "Sauvegarde sur le compte indisponible ici : ta progression reste sur cet appareil."] }[remote];
+  return `<div class="status ${m[0]}"><i></i><span>${m[1]}</span></div>`;
+}
+function paintStatus() { document.querySelectorAll("[data-status]").forEach(el => el.innerHTML = statusHTML()); }
+
+/* ---------- « Explique-moi autrement » (version Claude seulement) ---------- */
+let sampleFn = null;
+if (IN_CLAUDE) window.claude.use("sample").then(s => { sampleFn = s; if (s) document.querySelectorAll(".askbtn").forEach(b => b.hidden = false); }).catch(() => {});
+const plain = h => String(h).replace(/<sup>(.*?)<\/sup>/g, "^$1").replace(/<sub>(.*?)<\/sub>/g, "$1").replace(/<br\s*\/?>/g, " ").replace(/<[^>]+>/g, "")
+  .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/&quot;/g, '"');
+const ASK_ERR = { not_granted: "Tu n'as pas autorisé l'app à utiliser Claude.", sampling_disabled: "Claude n'est pas disponible sur ce compte.", rate_limited: "Trop de demandes pour le moment. Réessaie dans quelques minutes.",
+  session_expired: "Reconnecte-toi à Claude, puis réessaie.", refused: "Claude n'a pas pu répondre à cette question.", upstream_error: "La réponse a été interrompue. Réessaie." };
+async function askClaude(btn, q, chosen) {
+  const box = btn.parentElement, out = box.querySelector(".out") || box.appendChild(Object.assign(document.createElement("div"), { className: "out" }));
+  btn.disabled = true; out.textContent = "Claude réfléchit…";
+  const prompt = "Tu aides un élève francophone qui prépare la partie quantitative du psychométrique israélien (examen en français). Il n'a pas compris la correction ci-dessous. "
+    + "Explique autrement, simplement et en français, en 6 à 10 lignes au maximum : d'abord la méthode pas à pas, puis une astuce pour répondre plus vite le jour de l'examen. "
+    + "Écris les formules en texte simple (x², √, ×, /), sans LaTeX ni Markdown.\n\n"
+    + "Question : " + plain(q.t) + "\nRéponses proposées : " + q.o.map((o, i) => `(${i + 1}) ${plain(o)}`).join("  ")
+    + "\nBonne réponse : (" + q.a + ")\nRéponse de l'élève : " + (chosen ? "(" + chosen + ")" : "aucune") + "\nCorrection déjà donnée : " + plain(q.e);
+  try { const { text } = await sampleFn(prompt, { onText: ({ text }) => { out.textContent = text; } }); out.textContent = text; }
+  catch (e) { out.textContent = (e && e.text) || ""; if (!e || e.code !== "cancelled") out.textContent += (out.textContent ? "\n\n" : "") + (ASK_ERR[e && e.code] || ASK_ERR.upstream_error);
+    if (e && ["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"].includes(e.code)) { sampleFn = null; document.querySelectorAll(".askbtn").forEach(b => b.hidden = true); } }
+  btn.disabled = false; btn.textContent = "Réexpliquer encore";
+}
+
+/* ---------- données dérivées ---------- */
+function flat(f) { const out = []; f.parts.forEach((p, pi) => p.q.forEach((q, qi) => out.push(Object.assign({ pi, qi, key: f.id + ":" + pi + ":" + qi }, q)))); return out; }
+function qTheme(fid, idx) { return fid === "f9" ? EXAM_THEMES[idx] : FICHE_THEME[fid]; }
+function minutesOf(f) { const m = /(\d+) minutes/.exec(f.sub); return m ? +m[1] : 15; }
+function errorList() {
+  const out = [];
+  FICHES.forEach(f => { const r = store.res[f.id]; if (!r || !r.wrong) return; const all = flat(f);
+    r.wrong.forEach(k => { const i = all.findIndex(x => x.key === k); if (i >= 0) out.push(Object.assign({ from: f.title, th: qTheme(f.id, i) }, all[i])); }); });
+  return out;
+}
+function nextFiche() { const nd = FICHES.find(f => !store.res[f.id]); if (nd) return nd; return FICHES.slice().sort((a, b) => store.res[a.id].last / store.res[a.id].n - store.res[b.id].last / store.res[b.id].n)[0]; }
+const tipOf = q => q.tip || (TIPS.find(([k]) => q.t.includes(k)) || [])[1] || THEME_TIP[q.th] || "";
+const figOf = q => q.fig || (FIGS.find(([k]) => q.t.includes(k)) || [])[1] || "";
+
+/* ---------- onglets et routage ---------- */
+let timerId = null, cur = null;
+const quizLive = () => !!(cur && !cur.done);
+function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+function setTab(t) { document.querySelectorAll(".tabs a").forEach(a => a.dataset.tab === t ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")); }
+function route() {
+  stopTimer(); const h = location.hash.slice(1); cur = null;
+  if (/^f\d$/.test(h)) { const f = FICHES.find(x => x.id === h); if (f) { setTab("fiches"); return quizFiche(f); } }
+  if (h === "erreurs") { setTab("fiches"); const e = errorList(); if (e.length) return quizErrors(e); }
+  if (h.startsWith("gen-") && GEN_SETS.some(s => "gen-" + s[0] === h)) { setTab("entrainement"); return quizGen(h.slice(4)); }
+  if (h.startsWith("mental-") && MENTAL.some(m => "mental-" + m[0] === h)) { setTab("entrainement"); return runMental(h.slice(7)); }
+  const views = { fiches: viewFiches, entrainement: viewTraining, cartes: viewCards, stats: viewStats, sauvegarde: viewBackup };
+  const v = views[h]; setTab(v ? h === "sauvegarde" ? "stats" : h : "plan"); (v || viewPlan)(); window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", () => { persist(); route(); });
+document.addEventListener("visibilitychange", () => { if (document.hidden) persist(); });
+
+/* ---------- Aujourd'hui (planning) ---------- */
+function phaseOf(d) { if (d <= "2027-02-14") return 0; if (d <= "2027-03-14") return 1; if (d <= "2027-04-14") return 2; if (d < EXAM_DAY) return 3; return 4; }
+const PHASES = [["Réserve", "jusqu'au 14 février", "15 à 20 minutes par jour : calcul mental, cartes, quelques exercices. Une fiche les jours de permission."],
+  ["Reprise", "15 février – 14 mars", "Environ 1 heure par jour : une fiche ou des exercices, et tes erreurs."],
+  ["Examens blancs", "15 mars – 14 avril", "Exercices chaque jour, et un vrai examen NITE chaque week-end, chronométré."],
+  ["Derniers jours", "15 – 17 avril", "Révision légère : calcul mental et cartes. Dors bien."]];
+function dueCards() { const t = today(); return CARDS.filter(([id]) => store.cards[id] && store.cards[id].due <= t); }
+function newCardsLeft() { const t = today(); const introduced = Object.values(store.cards).filter(c => c.f === t).length; return Math.min(CARDS.filter(([id]) => !store.cards[id]).length, Math.max(0, 10 - introduced)); }
+function goalsToday() {
+  const d = today(), ph = phaseOf(d), L = store.log.filter(e => e.d === d), perm = !!store.perm[d];
+  const mental = L.some(e => e.k === "mental"), cards = L.some(e => e.k === "cards") || (dueCards().length === 0 && newCardsLeft() === 0);
+  const genN = L.filter(e => e.k === "gen").reduce((s, e) => s + e.n, 0), fiche = L.some(e => e.k === "fiche"), errs = errorList().length, nf_ = nextFiche();
+  const G = [];
+  const gMental = { title: "Calcul mental", sub: "1 série de 20 calculs (≈ 3 min)", done: mental, href: "#mental-melange" };
+  const gCards = { title: "Cartes du jour", sub: `${dueCards().length} à revoir · ${newCardsLeft()} nouvelles`, done: cards, href: "#cartes" };
+  if (ph === 4) return [];
+  G.push(gMental, gCards);
+  if (ph === 3) return G;
+  const gFiche = { title: "Une fiche", sub: nf_ ? `Fiche ${FICHES.indexOf(nf_) + 1} · ${nf_.title}` : "", done: fiche, href: "#" + (nf_ ? nf_.id : "fiches") };
+  const gErr = errs ? { title: "Mes erreurs", sub: `${errs} question${errs > 1 ? "s" : ""} à refaire`, done: L.some(e => e.k === "err"), href: "#erreurs" } : null;
+  if (ph === 0) { G.push({ title: "5 exercices", sub: "Une série d'exercices générés, tout mélangé", done: genN >= 5, href: "#gen-mixte" }); if (perm) { G.push(gFiche); if (gErr) G.push(gErr); } }
+  if (ph === 1) { G.push({ title: "Une fiche ou 10 exercices", sub: gFiche.sub, done: fiche || genN >= 10, href: gFiche.href }); if (gErr) G.push(gErr); }
+  if (ph === 2) {
+    G.push({ title: "10 exercices", sub: "Une série sur ton thème le plus faible", done: genN >= 10, href: "#gen-" + weakestGenSet() });
+    const wd = new Date().getDay();
+    if (wd === 5 || wd === 6) G.push({ title: "Examen blanc NITE", sub: "2 parties de 20 questions, 20 min chacune. Coche quand c'est fait.", done: !!store.manual[d], manual: true });
+    else G.push(gFiche);
+    if (gErr) G.push(gErr);
+  }
+  return G;
+}
+function weakestGenSet() { const st = themeStats(30); const cands = ["pourcentages", "problemes", "stats", "algebre", "geometrie", "espace"].filter(k => st[k] && st[k].n >= 5).sort((a, b) => st[a].ok / st[a].n - st[b].ok / st[b].n); return cands[0] || "mixte"; }
+function streak() { const days = new Set(store.log.map(e => e.d)); let d = today(); if (!days.has(d)) d = addDays(d, -1); let n = 0; while (days.has(d)) { n++; d = addDays(d, -1); } return n; }
+function viewPlan() {
+  const d = today(), left = Math.max(0, daysBetween(d, EXAM_DAY)), ph = phaseOf(d), G = goalsToday(), done = G.filter(g => g.done).length;
+  let h = `<header class="ph"><span class="eyebrow">Psychométrique du 18 avril 2027 · objectif 132 en quantitatif</span><h1>Aujourd'hui</h1></header>
+    <div class="stats"><div class="stat"><b>${left}</b><span>jours avant l'examen</span></div><div class="stat"><b>${streak()}</b><span>jours de travail d'affilée</span></div>
+    <div class="stat"><b>${G.length ? done + "/" + G.length : "–"}</b><span>objectifs du jour</span></div></div>`;
+  if (ph === 4) h += `<div class="sec"><div class="card">L'examen est passé. Bravo pour tout ce travail. Si tu repasses en juillet, le planning repartira de zéro.</div></div>`;
+  else {
+    h += `<section class="sec"><h2>Objectifs du jour</h2>`;
+    if (ph === 0) h += `<label class="toggle card"><input type="checkbox" id="perm" ${store.perm[d] ? "checked" : ""}><span><b>Je suis en permission aujourd'hui</b><br><small class="muted">Ajoute une fiche à faire, et tes erreurs.</small></span></label>`;
+    G.forEach((g, i) => {
+      h += g.manual ? `<label class="goal ${g.done ? "done" : ""}"><input type="checkbox" data-manual hidden ${g.done ? "checked" : ""}><span class="chk"></span><span><b>${esc(g.title)}</b><small>${esc(g.sub)}</small></span><span class="go">${g.done ? "Fait" : "Cocher"}</span></label>`
+        : `<a class="goal ${g.done ? "done" : ""}" href="${g.href}"><span class="chk"></span><span><b>${esc(g.title)}</b><small>${esc(g.sub)}</small></span><span class="go">${g.done ? "Fait" : "Commencer →"}</span></a>`;
+    });
+    if (G.length && done === G.length) h += `<div class="card">Tous tes objectifs du jour sont faits. Tu peux t'arrêter là ou continuer dans l'onglet Entraînement.</div>`;
+    h += `</section>`;
+  }
+  h += `<section class="sec"><h2>Le plan jusqu'au 18 avril</h2><div class="phases card">${PHASES.map((p, i) => `<div class="phase ${i === ph ? "now" : i < ph ? "past" : ""}"><span class="dot"></span><span><b>${p[0]}</b> <span class="muted small">· ${p[1]}</span><br><span class="small">${p[2]}</span></span></div>`).join("")}</div></section>
+    <section class="sec"><h2>Vrais examens à imprimer</h2><div class="card small">Les anciens examens NITE en français sont gratuits sur <a href="https://www.nite.org.il" target="_blank" rel="noopener">nite.org.il</a> (Psychometric Entrance Test → Preparation → French practice tests). Fais-les en conditions réelles pendant tes permissions.</div></section>
+    <section class="sec"><div data-status>${statusHTML()}</div><a class="secondary" href="#sauvegarde">Sauvegarde et transfert de progression</a></section>`;
+  app.innerHTML = h;
+  const p = document.getElementById("perm"); if (p) p.onchange = () => { if (p.checked) store.perm[d] = 1; else delete store.perm[d]; touch(); viewPlan(); };
+  const m = app.querySelector("[data-manual]"); if (m) m.closest("label").onclick = e => { e.preventDefault(); if (store.manual[d]) delete store.manual[d]; else { store.manual[d] = 1; addLog({ k: "manual", th: "", n: 0, ok: 0, t: 0 }); } touch(); viewPlan(); };
+}
+
+/* ---------- Fiches ---------- */
+function viewFiches() {
+  const errs = errorList().length;
+  let h = `<header class="ph"><span class="eyebrow">134 questions sur le modèle du NITE · mêmes numéros que le PDF</span><h1>Fiches</h1></header>
+    <div class="seg" role="group" aria-label="Mode de correction"><button id="m-fin" aria-pressed="${store.mode === "fin"}">Correction à la fin</button><button id="m-direct" aria-pressed="${store.mode === "direct"}">Correction immédiate</button></div>
+    <div class="list" style="margin-top:12px">`;
+  FICHES.forEach((f, i) => { const r = store.res[f.id], n = flat(f).length, d = store.draft[f.id];
+    const pill = r ? `<span class="pill ${lvl(r.last / r.n)}">${r.last}/${r.n}</span>` : d ? `<span class="pill">en cours</span>` : `<span class="pill">${n} q.</span>`;
+    h += `<a class="item" href="#${f.id}"><span class="num">${i + 1}</span><span class="txt"><b>${esc(f.title)}</b><small>${esc(f.sub)}${r ? " · meilleur : " + r.best + "/" + r.n : ""}</small></span>${pill}</a>`; });
+  h += `</div><div class="sec">${errs ? `<a class="secondary" href="#erreurs">Revoir mes erreurs (${errs})</a>` : `<div class="empty">Tes erreurs apparaîtront ici après ta première fiche, pour les refaire.</div>`}</div>`;
+  app.innerHTML = h;
+  document.getElementById("m-fin").onclick = () => { store.mode = "fin"; touch(); viewFiches(); };
+  document.getElementById("m-direct").onclick = () => { store.mode = "direct"; touch(); viewFiches(); };
+}
+
+/* ---------- moteur de quiz ---------- */
+function chartSVG(vals) {
+  const W = 520, H = 230, l = 40, r = 10, t = 24, b = 30, max = 70, n = vals.length, cw = (W - l - r) / n;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagramme en barres"><text x="4" y="14" font-size="12" fill="var(--muted)">Visiteurs (en milliers)</text>`;
+  for (let v = 0; v <= max; v += 10) { const y = t + (H - t - b) * (1 - v / max); s += `<line x1="${l}" x2="${W - r}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${l - 6}" y="${y + 4}" font-size="11" text-anchor="end" fill="var(--muted)">${v}</text>`; }
+  vals.forEach(([lab, v], i) => { const x = l + i * cw + cw * 0.25, w = cw * 0.5, y = t + (H - t - b) * (1 - v / max); s += `<rect x="${x}" y="${y}" width="${w}" height="${H - b - y}" fill="var(--accent)" rx="2"/><text x="${x + w / 2}" y="${H - b + 16}" font-size="12" text-anchor="middle" fill="var(--ink)">${lab}</text>`; });
+  return s + "</svg>";
+}
+const tableHTML = rows => `<div class="tablewrap"><table class="data"><thead><tr>${rows[0].map(c => `<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${rows.slice(1).map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+function qHTML(q, i) {
+  const fig = figOf(q);
+  return `<article class="q" id="q${i}"><div class="head"><span class="n">${i + 1}.</span><div class="text">${q.from ? `<small class="eyebrow">${esc(q.from)}</small><br>` : ""}${q.t}${fig ? `<div class="fig">${fig}</div>` : ""}</div></div>
+    <div class="opts">${q.o.map((o, j) => `<button class="opt" data-q="${i}" data-o="${j + 1}" aria-pressed="false"><span class="bub">${j + 1}</span><span class="lab">${o}</span></button>`).join("")}</div><div class="slot"></div></article>`;
+}
+/* cfg : {id, title, qs, parts?, limit, back, onDone(okFlags)} */
+function runQuiz(cfg) {
+  stopTimer();
+  const d = store.draft[cfg.id] || { ans: {}, el: 0 };
+  cur = { cfg, qs: cfg.qs, ans: Object.assign({}, d.ans), el: d.el || 0, done: false };
+  const direct = store.mode === "direct";
+  let h = `<div class="bar"><a class="back" href="${cfg.back}">← Retour</a><div class="t"><b>${esc(cfg.title)}</b><small id="prog"></small></div><span class="timer" id="timer"></span></div>`;
+  if (cfg.intro) h += `<p class="intro">${cfg.intro}</p>`;
+  if (cfg.parts) {
+    let n = 0;
+    cfg.parts.forEach(p => {
+      if (p.head) h += `<h3 class="part-head">${esc(p.head)}</h3>`;
+      if (p.intro) h += `<p class="intro">${esc(p.intro)}</p>`;
+      if (p.table) h += tableHTML(p.table);
+      if (p.chart) h += `<div class="chart">${chartSVG(p.chart)}</div>`;
+      if (p.table || p.chart) h += `<p class="note">Réponds à chaque question sans tenir compte des données des autres questions.</p>`;
+      p.q.forEach(() => { h += qHTML(cur.qs[n], n); n++; });
+    });
+  } else cur.qs.forEach((q, i) => { h += qHTML(q, i); });
+  h += `<div class="actions" id="actions"></div>`;
+  app.innerHTML = h;
+  app.querySelectorAll(".opt").forEach(b => b.onclick = () => pick_(+b.dataset.q, +b.dataset.o, direct));
+  cur.qs.forEach((q, i) => { if (cur.ans[i]) { mark(i, cur.ans[i]); if (direct) reveal(i); } });
+  quizActions(); progress();
+  const lim = cfg.limit || 0;
+  const tick = () => { const el = document.getElementById("timer"); if (!el || !cur) return stopTimer(); el.textContent = fmt(cur.el) + (lim ? " / " + fmt(lim) : ""); el.classList.toggle("over", !!lim && cur.el > lim); };
+  tick(); timerId = setInterval(() => { if (!cur || cur.done) return stopTimer(); cur.el++; tick(); if (cur.el % 10 === 0) persist(); }, 1000);
+  window.scrollTo(0, 0);
+}
+function mark(i, o) { document.querySelectorAll(`#q${i} .opt`).forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.o === o))); }
+function pick_(i, o, direct) { if (cur.done || (direct && cur.ans[i])) return; cur.ans[i] = o; mark(i, o); if (direct) reveal(i); progress(); persist(); quizActions(); }
+function reveal(i) {
+  const q = cur.qs[i], a = cur.ans[i], box = document.getElementById("q" + i); if (!box || box.dataset.rev) return; box.dataset.rev = 1;
+  box.querySelectorAll(".opt").forEach(b => { const o = +b.dataset.o; b.disabled = true; if (o === q.a) b.classList.add("right"); else if (o === a) b.classList.add("wrong"); });
+  box.classList.add(a === q.a ? "ok" : "bad");
+  const tip = tipOf(q);
+  box.querySelector(".slot").innerHTML = `<div class="expl"><div>${a === q.a ? "Bonne réponse." : a ? "Réponse correcte : <b>(" + q.a + ")</b>." : "Sans réponse. Réponse correcte : <b>(" + q.a + ")</b>."} ${q.e}</div>
+    ${tip ? `<div class="tip"><strong>Méthode rapide :</strong> ${tip}</div>` : ""}<div class="ask"><button class="askbtn" ${sampleFn ? "" : "hidden"}>Explique-moi autrement</button></div></div>`;
+  const btn = box.querySelector(".askbtn"); btn.onclick = () => askClaude(btn, q, a);
+}
+function progress() { const p = document.getElementById("prog"); if (p && cur) p.textContent = Object.keys(cur.ans).length + " / " + cur.qs.length + " répondues"; }
+function persist() { if (!cur || cur.done || !cur.cfg) return; store.draft[cur.cfg.id] = Object.assign({ ans: cur.ans, el: cur.el }, cur.cfg.keepQs ? { qs: cur.qs } : {}); saveLocal(); }
+function quizActions() {
+  const a = document.getElementById("actions"); if (!a) return;
+  if (cur.done) { a.innerHTML = `<button class="primary" id="again">${cur.cfg.againLabel || "Refaire"}</button><a class="secondary" href="${cur.cfg.back}">Retour</a>`; document.getElementById("again").onclick = () => { delete store.draft[cur.cfg.id]; saveLocal(); cur.cfg.again(); }; return; }
+  const left = cur.qs.length - Object.keys(cur.ans).length;
+  a.innerHTML = `<button class="primary" id="finish">Terminer et corriger</button>${left ? `<p class="intro" style="text-align:center">${left} question${left > 1 ? "s" : ""} sans réponse. À l'examen, réponds à tout : il n'y a pas de points en moins.</p>` : ""}`;
+  document.getElementById("finish").onclick = finishQuiz;
+}
+function finishQuiz() {
+  stopTimer(); cur.done = true;
+  const okF = cur.qs.map((q, i) => cur.ans[i] === q.a); cur.qs.forEach((_, i) => reveal(i));
+  const ok = okF.filter(Boolean).length, n = cur.qs.length;
+  delete store.draft[cur.cfg.id]; cur.cfg.onDone(okF, cur.el); touch();
+  const lim = cur.cfg.limit || 0, r = ok / n;
+  const msg = r >= 0.8 ? "Très bien. Garde ce rythme." : r >= 0.6 ? "Bien. Relis les explications des questions ratées, puis refais-les dans quelques jours." : "Relis les explications et les méthodes rapides ci-dessous, puis refais la série.";
+  const res = document.createElement("section"); res.className = "result";
+  res.innerHTML = `<span class="eyebrow">Résultat</span><span class="big">${ok}/${n}</span><p>Temps : ${fmt(cur.el)}${lim ? " (conseillé : " + fmt(lim) + ")" : ""} · ${nf(cur.el / n, 0)} s par question en moyenne. ${msg}</p>`;
+  document.querySelector(".bar").after(res);
+  document.getElementById("prog").textContent = "Corrigé"; document.getElementById("timer").textContent = fmt(cur.el);
+  quizActions(); window.scrollTo({ top: 0 });
+}
+function logByTheme(k, qs, okF, el, extra) {
+  const g = {}; qs.forEach((q, i) => { const th = q.th || "nombres"; (g[th] = g[th] || { n: 0, ok: 0 }); g[th].n++; if (okF[i]) g[th].ok++; });
+  const tq = el / qs.length; for (const th in g) addLog(Object.assign({ k, th, n: g[th].n, ok: g[th].ok, t: Math.round(tq * g[th].n) }, extra));
+}
+function quizFiche(f) {
+  const qs = flat(f).map((q, i) => Object.assign(q, { th: qTheme(f.id, i) }));
+  runQuiz({ id: f.id, title: f.title, qs, parts: f.parts, limit: minutesOf(f) * 60, back: "#fiches", againLabel: "Refaire cette fiche", again: () => quizFiche(f),
+    onDone: (okF, el) => { const ok = okF.filter(Boolean).length, prev = store.res[f.id];
+      store.res[f.id] = { last: ok, n: qs.length, best: Math.max(ok, prev ? prev.best : 0), wrong: qs.filter((_, i) => !okF[i]).map(q => q.key), el, date: today(), ts: Date.now() };
+      logByTheme("fiche", qs, okF, el, { src: f.id }); } });
+}
+function quizErrors(list) {
+  runQuiz({ id: "erreurs", title: "Mes erreurs", qs: list, back: "#fiches", intro: "Les questions ratées lors de ton dernier essai de chaque fiche. Pour les questions de tableau ou de graphique, reprends la fiche complète.",
+    againLabel: "Refaire les erreurs restantes", again: () => { const e = errorList(); if (e.length) quizErrors(e); else location.hash = "fiches"; },
+    onDone: (okF, el) => { FICHES.forEach(f => { const r = store.res[f.id]; if (r && r.wrong) r.wrong = r.wrong.filter(k => !list.some((q, i) => q.key === k && okF[i])); }); logByTheme("err", list, okF, el); } });
+}
+function quizGen(setId) {
+  const set = GEN_SETS.find(s => s[0] === setId), id = "gen-" + setId, d = store.draft[id];
+  const qs = d && d.qs ? d.qs : genSession(setId, 10);
+  if (!d) store.draft[id] = { ans: {}, el: 0, qs };
+  runQuiz({ id, title: set[1], qs, keepQs: true, limit: 10 * 60, back: "#entrainement", againLabel: "Nouvelle série (10 nouvelles questions)",
+    again: () => { delete store.draft[id]; quizGen(setId); },
+    onDone: (okF, el) => logByTheme("gen", qs, okF, el, { set: setId }) });
+}
+
+/* ---------- Entraînement ---------- */
+function viewTraining() {
+  const ms = mentalStats(), st = genSetStats();
+  let h = `<header class="ph"><span class="eyebrow">Nouvelles questions à chaque fois</span><h1>Entraînement</h1><p>Le calcul mental se fait en 3 minutes, partout. Les séries d'exercices changent de nombres à chaque fois.</p></header>
+    <section class="sec"><h2>Calcul mental</h2><p class="muted small" style="margin:0">20 calculs, tape la réponse. Idéal à la base.</p><div class="list">`;
+  MENTAL.forEach(([id, label]) => { const s = ms[id]; h += `<a class="item" href="#mental-${id}"><span class="num">${id === "melange" ? "∑" : "×"}</span><span class="txt"><b>${label}</b><small>${s ? `${pct(s.ok, s.n)} % juste · ${nf(s.t / s.n, 1)} s par calcul` : "Pas encore fait"}</small></span>${s ? `<span class="pill ${lvl(s.ok / s.n)}">${pct(s.ok, s.n)} %</span>` : ""}</a>`; });
+  h += `</div></section><section class="sec"><h2>Exercices à l'infini</h2><p class="muted small" style="margin:0">Séries de 10 questions au format de l'examen, 10 minutes conseillées.</p><div class="list">`;
+  GEN_SETS.forEach(([id, label]) => { const s = st[id], dr = store.draft["gen-" + id]; h += `<a class="item" href="#gen-${id}"><span class="num">${id === "mixte" ? "∑" : "+"}</span><span class="txt"><b>${label}</b><small>${dr ? "Série en cours" : s ? `${s.n} questions faites · ${pct(s.ok, s.n)} % juste` : "Pas encore fait"}</small></span>${s ? `<span class="pill ${lvl(s.ok / s.n)}">${pct(s.ok, s.n)} %</span>` : ""}</a>`; });
+  app.innerHTML = h + `</div></section>`;
+}
+function mentalStats() { const o = {}; store.log.filter(e => e.k === "mental").forEach(e => { for (const id of [e.cat, "all"]) { const s = o[id] = o[id] || { n: 0, ok: 0, t: 0 }; s.n += e.n; s.ok += e.ok; s.t += e.t; } }); o.melange = o.melange || null; return o; }
+function genSetStats() { const o = {}; store.log.filter(e => e.k === "gen").forEach(e => { const s = o[e.set] = o[e.set] || { n: 0, ok: 0 }; s.n += e.n; s.ok += e.ok; }); return o; }
+
+/* ---------- Calcul mental ---------- */
+function runMental(cat) {
+  const label = MENTAL.find(m => m[0] === cat)[1], N = 20;
+  const S = { i: 0, ok: 0, t: 0, errs: [], q: null, t0: 0, lock: false };
+  cur = { done: false };
+  const draw = () => {
+    S.q = mentalQ(cat); S.t0 = performance.now(); S.lock = false;
+    app.innerHTML = `<div class="bar"><a class="back" href="#entrainement">← Retour</a><div class="t"><b>${esc(label)}</b><small>${S.i + 1} / ${N} · ${S.ok} juste${S.ok > 1 ? "s" : ""}</small></div></div>
+      <div class="meter"><i style="width:${S.i / N * 100}%"></i></div>
+      <form class="drill" id="drill" autocomplete="off"><div class="prompt">${S.q.p}</div><label for="ans" class="muted small">Ta réponse</label>
+      <input id="ans" type="text" inputmode="decimal" enterkeyhint="go" autocomplete="off"><div class="fb" id="fb"></div><button class="primary" style="width:100%;max-width:260px">Valider</button></form>`;
+    const inp = document.getElementById("ans"); inp.focus();
+    document.getElementById("drill").onsubmit = ev => { ev.preventDefault(); if (S.lock) return; const raw = inp.value.trim(); if (!raw) return; S.lock = true;
+      const x = parseFloat(raw.replace(/\s|%/g, "").replace(",", ".").replace("−", "-")), dt = (performance.now() - S.t0) / 1000; S.t += dt;
+      const good = !isNaN(x) && Math.abs(x - S.q.v) <= (S.q.tol || 1e-9), fb = document.getElementById("fb");
+      inp.classList.add(good ? "ok" : "bad"); fb.className = "fb " + (good ? "ok" : "bad"); fb.textContent = good ? `Juste · ${nf(dt, 1)} s` : `Réponse : ${nf(S.q.v)}`;
+      if (good) S.ok++; else S.errs.push(S.q.p + " = " + nf(S.q.v) + " (toi : " + esc(raw) + ")");
+      S.i++; setTimeout(() => { if (location.hash !== "#mental-" + cat) return; S.i < N ? draw() : end(); }, good ? 600 : 1600); };
+  };
+  const end = () => {
+    cur.done = true; addLog({ k: "mental", th: "calcul", cat, n: N, ok: S.ok, t: Math.round(S.t) }); touch();
+    app.innerHTML = `<div class="bar"><a class="back" href="#entrainement">← Retour</a><div class="t"><b>${esc(label)}</b><small>Terminé</small></div></div>
+      <section class="result"><span class="eyebrow">Résultat</span><span class="big">${S.ok}/${N}</span><p>${nf(S.t / N, 1)} s par calcul en moyenne. ${S.ok === N ? "Parfait." : "Les calculs ratés sont ci-dessous : redis-les à voix haute."}</p></section>
+      ${S.errs.length ? `<div class="card"><b>À retenir</b><ul style="margin:6px 0 0;padding-left:20px">${S.errs.map(e => `<li class="mono">${e}</li>`).join("")}</ul></div>` : ""}
+      <div class="actions"><button class="primary" id="again">Recommencer</button><a class="secondary" href="#entrainement">Retour</a></div>`;
+    document.getElementById("again").onclick = () => runMental(cat);
+  };
+  draw();
+}
+
+/* ---------- Cartes (répétition espacée) ---------- */
+const INTERVALS = [0, 1, 2, 4, 8, 16];
+function viewCards() {
+  const due = dueCards().length, nw = newCardsLeft(), boxes = [0, 0, 0, 0, 0, 0];
+  CARDS.forEach(([id]) => { const c = store.cards[id]; boxes[c ? c.b : 0]++; });
+  app.innerHTML = `<header class="ph"><span class="eyebrow">Aide-mémoire · ${CARDS.length} cartes</span><h1>Cartes</h1><p>Une carte que tu connais revient de plus en plus tard (1, 2, 4, 8, 16 jours). Une carte ratée revient demain.</p></header>
+    <div class="stats"><div class="stat"><b>${due}</b><span>à revoir aujourd'hui</span></div><div class="stat"><b>${nw}</b><span>nouvelles aujourd'hui</span></div></div>
+    <section class="sec"><h2>Où en sont tes cartes</h2><div class="boxes">${boxes.map((n, i) => `<div><b>${n}</b>${i === 0 ? "jamais vues" : "boîte " + i}</div>`).join("")}</div></section>
+    <section class="sec">${due + nw ? `<button class="primary" id="go">Commencer (${due + nw} carte${due + nw > 1 ? "s" : ""})</button>` : `<div class="empty">Rien à revoir aujourd'hui. Reviens demain.</div>`}
+    <button class="secondary" id="all">Revoir toutes les cartes (sans changer le planning)</button></section>`;
+  const g = document.getElementById("go"); if (g) g.onclick = () => cardSession(false);
+  document.getElementById("all").onclick = () => cardSession(true);
+}
+function cardSession(free) {
+  const t = today();
+  let queue = free ? shuffleArr(CARDS) : [...dueCards(), ...CARDS.filter(([id]) => !store.cards[id]).slice(0, newCardsLeft())];
+  const tries = {}; let ok = 0, n = 0; cur = { done: false };
+  const show = () => {
+    if (!queue.length) return end();
+    const [id, front, back] = queue[0];
+    app.innerHTML = `<div class="bar"><a class="back" href="#cartes">← Retour</a><div class="t"><b>Cartes</b><small>${queue.length} restante${queue.length > 1 ? "s" : ""}</small></div></div>
+      <div class="flash"><div class="front">${front}</div><div class="back" id="back" hidden><b>${back}</b></div></div>
+      <div class="actions" id="ca"><button class="primary" id="flip">Voir la réponse</button></div>`;
+    document.getElementById("flip").onclick = () => {
+      document.getElementById("back").hidden = false;
+      document.getElementById("ca").innerHTML = `<div class="two"><button class="secondary" id="no">À revoir</button><button class="primary" id="yes">Je savais</button></div>`;
+      document.getElementById("yes").onclick = () => grade(id, true); document.getElementById("no").onclick = () => grade(id, false);
+    };
+  };
+  const grade = (id, good) => {
+    const card = queue.shift(); n++; if (good) ok++;
+    if (!free) { const c = store.cards[id] || { b: 0, f: t }; const firstTry = !tries[id];
+      if (firstTry) { c.b = good ? Math.min(5, c.b + 1) : 1; c.due = addDays(t, good ? INTERVALS[c.b] : 1); c.u = Date.now(); store.cards[id] = c; } }
+    tries[id] = (tries[id] || 0) + 1; if (!good && tries[id] < 3) queue.push(card);
+    saveLocal(); show();
+  };
+  const end = () => { cur.done = true; if (n) { addLog({ k: "cards", th: "", n, ok, t: 0 }); touch(); }
+    app.innerHTML = `<div class="bar"><a class="back" href="#cartes">← Retour</a><div class="t"><b>Cartes</b><small>Terminé</small></div></div>
+      <section class="result"><span class="eyebrow">Séance terminée</span><span class="big">${ok}/${n}</span><p>Les cartes ratées reviendront demain.</p></section><a class="secondary" href="#plan">Retour à aujourd'hui</a>`; };
+  show();
+}
+
+/* ---------- Stats ---------- */
+function themeStats(days) {
+  const since = addDays(today(), -days), o = {};
+  store.log.filter(e => e.d > since && (MCQ.has(e.k) || e.k === "mental")).forEach(e => { const th = e.k === "mental" ? "calcul" : e.th; const s = o[th] = o[th] || { n: 0, ok: 0, t: 0 }; s.n += e.n; s.ok += e.ok; s.t += e.t; });
+  return o;
+}
+function estimate() {
+  const L = store.log.filter(e => MCQ.has(e.k)).slice().reverse(); let n = 0, ok = 0;
+  for (const e of L) { n += e.n; ok += e.ok; if (n >= 60) break; }
+  if (n < 30) return null;
+  const p = ok / n; return { p, n, s: Math.max(50, Math.min(150, Math.round(70 + (p - 0.25) / 0.65 * 70))) };
+}
+function weekly() {
+  const monday = d => { const [y, m, dd] = d.split("-").map(Number); const x = new Date(y, m - 1, dd); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return dstr(x); };
+  const o = {}; store.log.filter(e => MCQ.has(e.k)).forEach(e => { const w = monday(e.d); const s = o[w] = o[w] || { n: 0, ok: 0 }; s.n += e.n; s.ok += e.ok; });
+  return Object.keys(o).sort().slice(-8).map(w => ({ w, ...o[w] }));
+}
+function lineSVG(pts) {
+  if (pts.length < 2) return `<div class="empty">La courbe apparaîtra après 2 semaines de travail.</div>`;
+  const W = 520, H = 200, l = 36, r = 14, t = 14, b = 30, n = pts.length, x = i => l + (W - l - r) * i / (n - 1), y = v => t + (H - t - b) * (1 - v / 100);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Réussite par semaine">`;
+  [0, 50, 100].forEach(v => { s += `<line x1="${l}" x2="${W - r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${l - 6}" y="${y(v) + 4}" font-size="11" text-anchor="end" fill="var(--muted)">${v} %</text>`; });
+  const P = pts.map((p, i) => [x(i), y(p.ok / p.n * 100)]);
+  s += `<path d="M${P.map(p => p.join(" ")).join(" L")} L${P[n - 1][0]} ${y(0)} L${P[0][0]} ${y(0)} Z" fill="var(--accent-soft)"/>`;
+  s += `<polyline points="${P.map(p => p.join(",")).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="2.5"/>`;
+  P.forEach((p, i) => { s += `<circle cx="${p[0]}" cy="${p[1]}" r="${i === n - 1 ? 5 : 3}" fill="var(--accent)"/>`; const [, m, d] = pts[i].w.split("-"); s += `<text x="${p[0]}" y="${H - 10}" font-size="11" text-anchor="middle" fill="var(--muted)">${+d}/${+m}</text>`; });
+  s += `<text x="${P[n - 1][0] - 6}" y="${P[n - 1][1] - 10}" font-size="12" text-anchor="end" fill="var(--ink)" font-weight="600">${pct(pts[n - 1].ok, pts[n - 1].n)} %</text>`;
+  return s + "</svg>";
+}
+function viewStats() {
+  const st = themeStats(30), all = Object.values(st).reduce((a, s) => ({ n: a.n + s.n, ok: a.ok + s.ok }), { n: 0, ok: 0 });
+  const mcq = store.log.filter(e => MCQ.has(e.k)), qn = mcq.reduce((s, e) => s + e.n, 0), qt = mcq.reduce((s, e) => s + e.t, 0), est = estimate(), ms = mentalStats();
+  let h = `<header class="ph"><span class="eyebrow">Tes résultats</span><h1>Stats</h1></header>
+    <div class="stats"><div class="stat"><b>${qn}</b><span>questions de type examen faites</span></div><div class="stat"><b>${qn ? nf(qt / qn, 0) + " s" : "–"}</b><span>par question (examen : ≈ 60 s)</span></div>
+    <div class="stat"><b>${all.n ? pct(all.ok, all.n) + " %" : "–"}</b><span>de réussite (30 jours)</span></div><div class="stat"><b>${streak()}</b><span>jours d'affilée</span></div></div>
+    <section class="sec"><h2>Note estimée en quantitatif</h2><div class="card est">${est ? `<span class="big">≈ ${est.s}</span><span class="muted small">D'après tes ${est.n} dernières réponses (${pct(est.p * est.n, est.n)} % juste). Objectif : 132.</span>` : `<span class="muted">L'estimation apparaît après 30 questions de fiches ou d'exercices.</span>`}
+      <span class="muted small">Estimation très approximative : ce n'est pas un calcul officiel du NITE. Ces exercices ne sont pas de vraies questions d'examen. Les examens NITE en conditions réelles restent la meilleure mesure.</span></div></section>
+    <section class="sec"><h2>Réussite par thème (30 derniers jours)</h2>`;
+  const ths = Object.keys(THEMES).filter(k => st[k]).sort((a, b) => st[a].ok / st[a].n - st[b].ok / st[b].n);
+  h += ths.length ? `<div class="card stack">${ths.map((k, i) => { const s = st[k], r = s.ok / s.n; return `<div class="hbar"><span>${THEMES[k]}${i === 0 && ths.length > 1 ? ` <span class="pill low" style="font-size:11px">à travailler</span>` : ""}</span><span class="track"><i style="width:${Math.max(3, r * 100)}%;background:${lvlColor(r)}"></i></span><span class="v">${pct(s.ok, s.n)} % · ${nf(s.t / s.n, 0)} s</span></div>`; }).join("")}
+      <span class="muted small">% de réussite · temps moyen par question. Le thème le plus faible est en haut.</span></div>` : `<div class="empty">Fais une fiche ou une série d'exercices pour voir tes résultats par thème.</div>`;
+  h += `</section><section class="sec"><h2>Progression par semaine</h2><div class="chart">${lineSVG(weekly())}</div></section>
+    <section class="sec"><h2>Calcul mental</h2>`;
+  const mk_ = MENTAL.filter(m => ms[m[0]]);
+  h += mk_.length ? `<div class="card stack">${mk_.map(([id, label]) => { const s = ms[id], r = s.ok / s.n; return `<div class="hbar"><span>${label}</span><span class="track"><i style="width:${Math.max(3, r * 100)}%;background:${lvlColor(r)}"></i></span><span class="v">${pct(s.ok, s.n)} % · ${nf(s.t / s.n, 1)} s</span></div>`; }).join("")}</div>` : `<div class="empty">Fais une série de calcul mental pour voir ta vitesse.</div>`;
+  h += `</section><section class="sec"><div data-status>${statusHTML()}</div><a class="secondary" href="#sauvegarde">Sauvegarde et transfert de progression</a></section>`;
+  app.innerHTML = h;
+}
+
+/* ---------- Sauvegarde / transfert ---------- */
+const enc = o => "O132:" + btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+const dec = s => JSON.parse(decodeURIComponent(escape(atob(s.trim().replace(/^O132:/, "")))));
+function viewBackup() {
+  const other = IN_CLAUDE ? `<p>La version <b>hors ligne</b> (installable sur ton téléphone) : <a href="${SITE_URL}" target="_blank" rel="noopener">${SITE_URL.replace("https://", "")}</a></p>`
+    : `<p>La version <b>Claude</b> (avec « Explique-moi autrement » et la sauvegarde sur ton compte) : <a href="${CLAUDE_URL}" target="_blank" rel="noopener">ouvrir dans Claude</a></p>`;
+  app.innerHTML = `<div class="bar"><a class="back" href="#stats">← Retour</a><div class="t"><b>Sauvegarde et transfert</b></div></div>
+    <div class="stack"><div data-status>${statusHTML()}</div>
+    <div class="card stack small"><b>Deux versions de l'app</b>${other}<p style="margin:0">Elles ne se synchronisent pas toutes seules. Pour passer ta progression de l'une à l'autre : copie ton code ici, puis colle-le dans l'autre version. Les deux progressions sont additionnées, rien n'est perdu.</p></div>
+    <section class="sec"><h2>1. Copier mon code</h2><textarea id="out" readonly aria-label="Code de progression">${enc(store)}</textarea><button class="primary" id="copy">Copier le code</button><span id="cmsg" class="muted small"></span></section>
+    <section class="sec"><h2>2. Coller un code</h2><textarea id="in" aria-label="Coller un code" placeholder="Colle ici le code copié dans l'autre version (il commence par O132:)"></textarea><button class="secondary" id="imp">Ajouter cette progression</button><span id="imsg" class="small"></span></section>
+    <section class="sec" id="resetzone"><button class="linkbtn" id="reset">Effacer toute ma progression sur cette version</button></section></div>`;
+  document.getElementById("copy").onclick = () => { const ta = document.getElementById("out"), m = document.getElementById("cmsg");
+    navigator.clipboard.writeText(ta.value).then(() => m.textContent = "Code copié.", () => { ta.select(); m.textContent = "Le code est sélectionné : copie-le avec le menu de ton téléphone."; }); };
+  document.getElementById("imp").onclick = () => { const m = document.getElementById("imsg");
+    try { const o = dec(document.getElementById("in").value); if (!o || !Array.isArray(o.log)) throw 0; store = merge(store, Object.assign(blank(), o)); store.upd = Date.now(); touch(); m.style.color = "var(--ok)"; m.textContent = "Progression ajoutée."; document.getElementById("out").value = enc(store); }
+    catch (e) { m.style.color = "var(--bad)"; m.textContent = "Ce code n'est pas valide. Recopie-le en entier depuis l'autre version."; } };
+  document.getElementById("reset").onclick = () => { document.getElementById("resetzone").innerHTML = `<div class="confirm"><span>Effacer tous les scores, cartes et réponses en cours de cette version ? Ce n'est pas réversible.</span><div class="row"><button class="danger" id="yes">Effacer</button><button class="secondary" id="no">Annuler</button></div></div>`;
+    document.getElementById("yes").onclick = () => { store = blank(); store.upd = Date.now(); touch(); viewBackup(); }; document.getElementById("no").onclick = viewBackup; };
+}
+
+/* ---------- démarrage ---------- */
+route();
+initRemote();
+if (!IN_CLAUDE && "serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+
+})();
+</script>
+</body></html>
