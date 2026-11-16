@@ -352,13 +352,13 @@ const S = 'fill="none" stroke="var(--ink)" stroke-width="1.6"';
 const T = (x, y, s, a) => `<text x="${x}" y="${y}" font-size="13" fill="var(--ink)" font-family="IBM Plex Sans,system-ui,sans-serif"${a ? ` text-anchor="${a}"` : ""}>${s}</text>`;
 const RA = (x, y, dx, dy) => `<path d="M${x + dx} ${y} L${x + dx} ${y + dy} L${x} ${y + dy}" ${S}/>`;
 const FIGS = [
- ["8 cm sur 6 cm", `<svg viewBox="0 0 260 170"><rect x="30" y="20" width="200" height="120" ${S}/><line x1="30" y1="140" x2="230" y2="20" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="5 4"/>${T(130, 160, "8 cm", "middle")}${T(240, 84, "6 cm")}</svg>`],
+ ["8 cm sur 6 cm", `<svg viewBox="0 0 290 170"><rect x="30" y="20" width="200" height="120" ${S}/><line x1="30" y1="140" x2="230" y2="20" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="5 4"/>${T(130, 160, "8 cm", "middle")}${T(240, 84, "6 cm")}</svg>`],
  ["angle droit d'un triangle rectangle mesurent 5 et 12", `<svg viewBox="0 0 260 150"><path d="M30 130 L230 130 L30 40 Z" ${S}/>${RA(30, 130, 12, -12)}${T(130, 146, "12", "middle")}${T(14, 90, "5")}</svg>`],
  ["bases de 6 et 10", `<svg viewBox="0 0 260 150"><path d="M30 125 L230 125 L170 35 L90 35 Z" ${S}/><line x1="110" y1="35" x2="110" y2="125" stroke="var(--muted)" stroke-dasharray="4 4"/>${T(130, 28, "6", "middle")}${T(130, 143, "10", "middle")}${T(116, 84, "5")}</svg>`],
  ["Deux droites parallèles sont coupées", `<svg viewBox="0 0 260 160"><line x1="15" y1="50" x2="245" y2="50" ${S}/><line x1="15" y1="115" x2="245" y2="115" ${S}/><line x1="80" y1="150" x2="190" y2="10" ${S}/>${T(150, 44, "70°")}</svg>`],
  ["un angle mesure 30° et l'hypoténuse mesure 10", `<svg viewBox="0 0 260 150"><path d="M30 130 L220 130 L220 30 Z" ${S}/>${RA(220, 130, -12, -12)}${T(70, 124, "30°")}${T(112, 70, "10", "end")}</svg>`],
  ["angle au centre mesure 80°", `<svg viewBox="0 0 220 200"><circle cx="110" cy="100" r="80" ${S}/><path d="M161 39 L110 100 L59 39" ${S}/><path d="M161 39 L110 180 L59 39" stroke="var(--accent)" stroke-width="1.6" fill="none"/><circle cx="110" cy="100" r="2.5" fill="var(--ink)"/>${T(110, 92, "80°", "middle")}${T(110, 196, "?", "middle")}</svg>`],
- ["ABCD est un rectangle avec AB = 8", `<svg viewBox="0 0 260 170"><rect x="30" y="20" width="200" height="120" ${S}/><path d="M30 140 L230 140 L130 20 Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>${T(22, 156, "A", "end")}${T(238, 156, "B")}${T(238, 18, "C")}${T(22, 18, "D", "end")}${T(130, 14, "M", "middle")}${T(130, 158, "8", "middle")}${T(240, 84, "6")}</svg>`],
+ ["ABCD est un rectangle avec AB = 8", `<svg viewBox="0 0 270 170"><rect x="30" y="20" width="200" height="120" ${S}/><path d="M30 140 L230 140 L130 20 Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>${T(22, 156, "A", "end")}${T(238, 156, "B")}${T(238, 18, "C")}${T(22, 18, "D", "end")}${T(130, 14, "M", "middle")}${T(130, 158, "8", "middle")}${T(240, 84, "6")}</svg>`],
  ["cercle est inscrit dans un carré de côté 10", `<svg viewBox="0 0 200 200"><rect x="20" y="20" width="160" height="160" fill="var(--accent-soft)" stroke="var(--ink)" stroke-width="1.6"/><circle cx="100" cy="100" r="80" fill="var(--card)" stroke="var(--ink)" stroke-width="1.6"/>${T(100, 196, "10", "middle")}</svg>`],
  ["distance entre les points (1 ; 2) et (4 ; 6)", `<svg viewBox="0 0 220 200"><path d="M20 180 H210 M30 190 V10" stroke="var(--muted)" fill="none"/><circle cx="60" cy="140" r="3" fill="var(--accent)"/><circle cx="150" cy="20" r="3" fill="var(--accent)"/><line x1="60" y1="140" x2="150" y2="20" ${S}/>${T(66, 156, "(1 ; 2)")}${T(156, 34, "(4 ; 6)")}${T(204, 196, "x")}${T(36, 14, "y")}</svg>`],
  ["sommets sont (0 ; 0), (6 ; 0) et (0 ; 4)", `<svg viewBox="0 0 240 170"><path d="M20 150 H230 M30 160 V10" stroke="var(--muted)" fill="none"/><path d="M30 150 L210 150 L30 30 Z" fill="var(--accent-soft)" stroke="var(--ink)" stroke-width="1.6"/>${T(210, 166, "6", "middle")}${T(18, 34, "4", "end")}</svg>`],
@@ -396,7 +396,7 @@ const lcm = (a, b) => a / gcd(a, b) * b;
 function shuffleArr(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function nf(x, d = 2) {
   const r = Math.round(x * 10 ** d) / 10 ** d;
-  let s = Math.abs(r).toFixed(d).replace(/\.?0+$/, "");
+  let s = Math.abs(r).toFixed(d); if (s.includes(".")) s = s.replace(/\.?0+$/, "");
   let [i, f] = s.split(".");
   if (i.length > 4) i = i.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   return (r < 0 ? "−" : "") + i + (f ? "," + f : "");
@@ -414,7 +414,7 @@ function mk(theme, t, correct, distractors, e, tip, fig) {
     if (!opts.includes(s)) opts.push(s); k++; if (k > 20) break;
   }
   const o = shuffleArr(opts);
-  return { t, o, a: o.indexOf(String(correct)) + 1, e, tip, theme, fig: fig || "" };
+  return { t, o, a: o.indexOf(String(correct)) + 1, e, tip, th: theme, fig: fig || "" };
 }
 const par = v => v < 0 ? "(" + nf(v) + ")" : nf(v);
 const piStr = k => (k === 1 ? "" : nf(k)) + "π";
