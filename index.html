@@ -631,30 +631,37 @@ function merge(a, b) {
 }
 
 /* ---------- sauvegarde sur le compte Claude (version Claude seulement) ---------- */
-let db = null, remote = IN_CLAUDE ? "loading" : "off", writing = false, pendingW = false, rtimer = null;
-function scheduleRemote() { if (!db || remote === "error") return; clearTimeout(rtimer); rtimer = setTimeout(pushRemote, 2500); }
+let db = null, remote = IN_CLAUDE ? "loading" : "off", loaded = false, dirty = false, writing = false, pendingW = false, rtimer = null, retryT = null, skipMerge = false;
+function scheduleRemote() { dirty = true; if (!db || !loaded) return; clearTimeout(rtimer); rtimer = setTimeout(pushRemote, 2500); }
+function retryLater() { clearTimeout(retryT); retryT = setTimeout(() => loaded ? pushRemote() : loadRemote(), 60000); }
+function mergeRemote(snap) { if (snap && snap.exists) { const d = snap.data(); if (d && typeof d.json === "string") { try { store = merge(store, JSON.parse(d.json)); } catch (e) {} } } }
+/* Lire puis fusionner avant chaque envoi : une autre copie de l'app (téléphone, ordinateur) a pu sauvegarder entre-temps. */
 async function pushRemote() {
-  if (!db) return; if (writing) { pendingW = true; return; } writing = true;
-  try { await db.doc("progress/main").set({ json: JSON.stringify(store), upd: store.upd }); remote = "ok"; }
-  catch (e) { remote = e && e.code === "quota_exceeded" ? "full" : "error"; }
+  if (!db || !loaded) return; if (writing) { pendingW = true; return; } writing = true;
+  try { const ref = db.doc("progress/main"); if (!skipMerge) { mergeRemote(await ref.get()); saveLocal(); } await ref.set({ json: JSON.stringify(store), upd: store.upd }); remote = "ok"; dirty = false; skipMerge = false; }
+  catch (e) { const c = e && e.code; remote = c === "quota_exceeded" ? "full" : c === "revoked" || c === "not_granted" ? "off" : "error"; if (remote === "error") retryLater(); }
   writing = false; if (pendingW) { pendingW = false; pushRemote(); } paintStatus();
+}
+async function loadRemote() {
+  if (!db || loaded) return;
+  let settled = false; const t = setTimeout(() => { if (!settled) { remote = "slow"; paintStatus(); } }, 10000);
+  try {
+    const snap = await db.doc("progress/main").get(); settled = true; clearTimeout(t);
+    mergeRemote(snap); loaded = true; remote = "ok"; saveLocal(); if (!quizLive()) route(); await pushRemote();
+  } catch (e) { settled = true; clearTimeout(t); remote = "error"; retryLater(); }
+  paintStatus();
 }
 async function initRemote() {
   if (!IN_CLAUDE) return;
   try { db = await window.claude.use("db"); } catch (e) { db = null; }
   if (!db) { remote = "off"; paintStatus(); return; }
-  let settled = false; const t = setTimeout(() => { if (!settled) { remote = "slow"; paintStatus(); } }, 10000);
-  try {
-    const snap = await db.doc("progress/main").get(); settled = true; clearTimeout(t);
-    if (snap.exists) { const d = snap.data(); if (d && typeof d.json === "string") { try { store = merge(store, JSON.parse(d.json)); } catch (e) {} } }
-    remote = "ok"; saveLocal(); if (!quizLive()) route(); await pushRemote();
-  } catch (e) { settled = true; clearTimeout(t); remote = "error"; }
-  paintStatus();
+  loadRemote();
 }
+window.addEventListener("online", () => { if (!db) return; if (!loaded) loadRemote(); else if (dirty || remote === "error") pushRemote(); });
 function statusHTML() {
   if (!IN_CLAUDE) return `<div class="status"><i></i><span>Version hors ligne : ta progression est gardée sur cet appareil.</span></div>`;
-  const m = { loading: ["warn", "Connexion à ta sauvegarde…"], slow: ["warn", "Ta sauvegarde ne répond pas encore. Ta progression reste gardée sur cet appareil."], ok: ["on", "Progression sauvegardée sur ton compte Claude."],
-    error: ["warn", "La sauvegarde sur ton compte a échoué. Ta progression reste gardée sur cet appareil."], full: ["warn", "La sauvegarde est pleine. Ta progression reste gardée sur cet appareil."], off: ["", "Sauvegarde sur le compte indisponible ici : ta progression reste sur cet appareil."] }[remote];
+  const m = { loading: ["warn", "Connexion à ta sauvegarde…"], slow: ["warn", "Connexion lente : ta sauvegarde ne répond pas encore. Ta progression est gardée sur cet appareil."], ok: ["on", "Progression sauvegardée sur ton compte Claude."],
+    error: ["warn", "Pas de connexion à ta sauvegarde pour l’instant. Ta progression est gardée sur cet appareil et sera envoyée toute seule dès que la connexion revient."], full: ["warn", "La sauvegarde est pleine. Ta progression reste gardée sur cet appareil."], off: ["", "Sauvegarde sur le compte indisponible ici : ta progression reste sur cet appareil."] }[remote];
   return `<div class="status ${m[0]}"><i></i><span>${m[1]}</span></div>`;
 }
 function paintStatus() { document.querySelectorAll("[data-status]").forEach(el => el.innerHTML = statusHTML()); }
@@ -1036,7 +1043,7 @@ function viewBackup() {
     try { const o = dec(document.getElementById("in").value); if (!o || !Array.isArray(o.log)) throw 0; store = merge(store, Object.assign(blank(), o)); store.upd = Date.now(); touch(); m.style.color = "var(--ok)"; m.textContent = "Progression ajoutée."; document.getElementById("out").value = enc(store); }
     catch (e) { m.style.color = "var(--bad)"; m.textContent = "Ce code n'est pas valide. Recopie-le en entier depuis l'autre version."; } };
   document.getElementById("reset").onclick = () => { document.getElementById("resetzone").innerHTML = `<div class="confirm"><span>Effacer tous les scores, cartes et réponses en cours de cette version ? Ce n'est pas réversible.</span><div class="row"><button class="danger" id="yes">Effacer</button><button class="secondary" id="no">Annuler</button></div></div>`;
-    document.getElementById("yes").onclick = () => { store = blank(); store.upd = Date.now(); touch(); viewBackup(); }; document.getElementById("no").onclick = viewBackup; };
+    document.getElementById("yes").onclick = () => { store = blank(); store.upd = Date.now(); skipMerge = true; touch(); viewBackup(); }; document.getElementById("no").onclick = viewBackup; };
 }
 
 /* ---------- démarrage ---------- */
