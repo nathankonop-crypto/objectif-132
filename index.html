@@ -630,38 +630,65 @@ function merge(a, b) {
   return out;
 }
 
-/* ---------- sauvegarde sur le compte Claude (version Claude seulement) ---------- */
-let db = null, remote = IN_CLAUDE ? "loading" : "off", loaded = false, dirty = false, writing = false, pendingW = false, rtimer = null, retryT = null, skipMerge = false;
-function scheduleRemote() { dirty = true; if (!db || !loaded) return; clearTimeout(rtimer); rtimer = setTimeout(pushRemote, 2500); }
+/* ---------- sauvegarde en ligne ----------
+   Version Claude : base de l'artefact (progress/main).
+   Version installée : table objectif132_progression du projet Supabase, protégée par un code secret propre à l'appareil. */
+const SB_URL = "https://qhyvdodkzdhmobkvahwa.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoeXZkb2RremRobW9ia3ZhaHdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5ODU3OTAsImV4cCI6MjEwNzU2MTc5MH0.Hhq92tBVTB2tiIn24_QfD8mNaMnjQU3tsz_DKjng2EI";
+const SYNC_KEY = "objectif132-sync";
+function syncCode() {
+  let c = null; try { c = localStorage.getItem(SYNC_KEY); } catch (e) {}
+  if (!c || c.length < 32) { const a = new Uint8Array(24); crypto.getRandomValues(a); c = "o132-" + Array.from(a, b => b.toString(16).padStart(2, "0")).join(""); try { localStorage.setItem(SYNC_KEY, c); } catch (e) {} }
+  return c;
+}
+async function rpc(fn, body) {
+  const r = await fetch(SB_URL + "/rest/v1/rpc/" + fn, { method: "POST", headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  if (!r.ok) { const t = await r.text().catch(() => ""); throw { code: r.status === 404 ? "setup" : /plein|trop grand/i.test(t) ? "full" : "error" }; }
+  return r.status === 204 ? null : r.json();
+}
+let backend = null, remote = "loading", loaded = false, dirty = false, writing = false, pendingW = false, rtimer = null, retryT = null, skipMerge = false, lastSync = 0;
+function scheduleRemote() { dirty = true; if (!backend || !loaded) return; clearTimeout(rtimer); rtimer = setTimeout(pushRemote, IN_CLAUDE ? 2500 : 8000); }
 function retryLater() { clearTimeout(retryT); retryT = setTimeout(() => loaded ? pushRemote() : loadRemote(), 60000); }
-function mergeRemote(snap) { if (snap && snap.exists) { const d = snap.data(); if (d && typeof d.json === "string") { try { store = merge(store, JSON.parse(d.json)); } catch (e) {} } } }
-/* Lire puis fusionner avant chaque envoi : une autre copie de l'app (téléphone, ordinateur) a pu sauvegarder entre-temps. */
+function mergeJSON(j) { if (typeof j === "string") { try { store = merge(store, JSON.parse(j)); } catch (e) {} } }
+/* Lire puis fusionner avant chaque envoi : une autre copie de l'app a pu sauvegarder entre-temps. */
 async function pushRemote() {
-  if (!db || !loaded) return; if (writing) { pendingW = true; return; } writing = true;
-  try { const ref = db.doc("progress/main"); if (!skipMerge) { mergeRemote(await ref.get()); saveLocal(); } await ref.set({ json: JSON.stringify(store), upd: store.upd }); remote = "ok"; dirty = false; skipMerge = false; }
-  catch (e) { const c = e && e.code; remote = c === "quota_exceeded" ? "full" : c === "revoked" || c === "not_granted" ? "off" : "error"; if (remote === "error") retryLater(); }
+  if (!backend || !loaded) return; if (writing) { pendingW = true; return; } writing = true;
+  try { if (!skipMerge) { mergeJSON(await backend.get()); saveLocal(); } await backend.set(JSON.stringify(store), store.upd); remote = "ok"; dirty = false; skipMerge = false; lastSync = Date.now(); }
+  catch (e) { const c = e && e.code; remote = c === "quota_exceeded" || c === "full" ? "full" : c === "setup" ? "setup" : c === "revoked" || c === "not_granted" ? "off" : "error"; if (remote === "error") retryLater(); }
   writing = false; if (pendingW) { pendingW = false; pushRemote(); } paintStatus();
 }
 async function loadRemote() {
-  if (!db || loaded) return;
+  if (!backend || loaded) return;
   let settled = false; const t = setTimeout(() => { if (!settled) { remote = "slow"; paintStatus(); } }, 10000);
   try {
-    const snap = await db.doc("progress/main").get(); settled = true; clearTimeout(t);
-    mergeRemote(snap); loaded = true; remote = "ok"; saveLocal(); if (!quizLive()) route(); await pushRemote();
-  } catch (e) { settled = true; clearTimeout(t); remote = "error"; retryLater(); }
+    const j = await backend.get(); settled = true; clearTimeout(t);
+    mergeJSON(j); loaded = true; remote = "ok"; saveLocal(); if (!quizLive()) route(); await pushRemote();
+  } catch (e) { settled = true; clearTimeout(t); remote = e && e.code === "setup" ? "setup" : "error"; if (remote === "error") retryLater(); }
   paintStatus();
 }
 async function initRemote() {
-  if (!IN_CLAUDE) return;
-  try { db = await window.claude.use("db"); } catch (e) { db = null; }
-  if (!db) { remote = "off"; paintStatus(); return; }
+  if (IN_CLAUDE) {
+    let db = null; try { db = await window.claude.use("db"); } catch (e) {}
+    if (!db) { remote = "off"; paintStatus(); return; }
+    const ref = db.doc("progress/main");
+    backend = { get: async () => { const s = await ref.get(); const d = s.exists ? s.data() : null; return d && d.json; }, set: (json, upd) => ref.set({ json, upd }) };
+  } else {
+    const code = syncCode();
+    backend = { get: async () => { const r = await rpc("objectif132_lire", { p_code: code }); return r && r[0] ? r[0].donnees : null; },
+      set: (json, upd) => rpc("objectif132_ecrire", { p_code: code, p_donnees: json, p_upd: upd }) };
+  }
   loadRemote();
 }
-window.addEventListener("online", () => { if (!db) return; if (!loaded) loadRemote(); else if (dirty || remote === "error") pushRemote(); });
+function useSyncCode(c) { try { localStorage.setItem(SYNC_KEY, c); } catch (e) {} loaded = false; remote = "loading"; initRemote(); }
+window.addEventListener("online", () => { if (!backend) return; if (!loaded) loadRemote(); else if (dirty || remote === "error") pushRemote(); });
+document.addEventListener("visibilitychange", () => { if (!backend) return; if (document.hidden) { if (dirty && loaded) pushRemote(); } else if (!loaded) loadRemote(); else if (dirty || remote !== "ok") pushRemote(); });
 function statusHTML() {
-  if (!IN_CLAUDE) return `<div class="status"><i></i><span>Version hors ligne : ta progression est gardée sur cet appareil.</span></div>`;
-  const m = { loading: ["warn", "Connexion à ta sauvegarde…"], slow: ["warn", "Connexion lente : ta sauvegarde ne répond pas encore. Ta progression est gardée sur cet appareil."], ok: ["on", "Progression sauvegardée sur ton compte Claude."],
-    error: ["warn", "Pas de connexion à ta sauvegarde pour l’instant. Ta progression est gardée sur cet appareil et sera envoyée toute seule dès que la connexion revient."], full: ["warn", "La sauvegarde est pleine. Ta progression reste gardée sur cet appareil."], off: ["", "Sauvegarde sur le compte indisponible ici : ta progression reste sur cet appareil."] }[remote];
+  const where = IN_CLAUDE ? "sur ton compte Claude" : "en ligne";
+  const m = { loading: ["warn", "Connexion à ta sauvegarde…"], slow: ["warn", "Connexion lente : ta sauvegarde ne répond pas encore. Ta progression est gardée sur cet appareil."],
+    ok: ["on", "Progression sauvegardée " + where + (lastSync ? " (à " + new Date(lastSync).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) + ")" : "") + "."],
+    error: ["warn", "Pas de réseau pour l’instant : ta progression est gardée sur cet appareil et sera envoyée toute seule dès que le réseau revient."],
+    full: ["warn", "La sauvegarde en ligne est pleine. Ta progression reste gardée sur cet appareil."], setup: ["warn", "La sauvegarde en ligne n'est pas encore activée. Ta progression est gardée sur cet appareil."],
+    off: ["", "Sauvegarde en ligne indisponible ici : ta progression reste sur cet appareil."] }[remote];
   return `<div class="status ${m[0]}"><i></i><span>${m[1]}</span></div>`;
 }
 function paintStatus() { document.querySelectorAll("[data-status]").forEach(el => el.innerHTML = statusHTML()); }
@@ -1033,10 +1060,15 @@ function viewBackup() {
     : `<p>La version <b>Claude</b> (avec « Explique-moi autrement » et la sauvegarde sur ton compte) : <a href="${CLAUDE_URL}" target="_blank" rel="noopener">ouvrir dans Claude</a></p>`;
   app.innerHTML = `<div class="bar"><a class="back" href="#stats">← Retour</a><div class="t"><b>Sauvegarde et transfert</b></div></div>
     <div class="stack"><div data-status>${statusHTML()}</div>
-    <div class="card stack small"><b>Deux versions de l'app</b>${other}<p style="margin:0">Elles ne se synchronisent pas toutes seules. Pour passer ta progression de l'une à l'autre : copie ton code ici, puis colle-le dans l'autre version. Les deux progressions sont additionnées, rien n'est perdu.</p></div>
-    <section class="sec"><h2>1. Copier mon code</h2><textarea id="out" readonly aria-label="Code de progression">${enc(store)}</textarea><button class="primary" id="copy">Copier le code</button><span id="cmsg" class="muted small"></span></section>
+    <div class="card stack small"><b>Deux versions de l'app</b>${other}<p style="margin:0">Chacune a sa propre sauvegarde en ligne. Pour passer ta progression de l'une à l'autre : copie ton code de progression ici, puis colle-le dans l'autre version. Les deux progressions sont additionnées, rien n'est perdu.</p></div>
+    ${IN_CLAUDE ? "" : `<section class="sec"><h2>Code de synchronisation</h2><p class="small muted" style="margin:0">Ta progression est sauvegardée en ligne avec ce code secret. Garde-le : si tu réinstalles l'app ou changes de téléphone, colle-le ici pour tout récupérer. Ne le donne à personne.</p>
+    <textarea id="sc" readonly aria-label="Code de synchronisation" style="min-height:56px">${esc(syncCode())}</textarea><button class="secondary" id="sccopy">Copier le code de synchronisation</button>
+    <textarea id="scin" aria-label="Utiliser un autre code" style="min-height:56px" placeholder="Pour récupérer une sauvegarde : colle ici ton ancien code (il commence par o132-)"></textarea><button class="secondary" id="scuse">Utiliser ce code</button><span id="scmsg" class="small"></span></section>`}
+    <section class="sec"><h2>1. Copier mon code de progression</h2><textarea id="out" readonly aria-label="Code de progression">${enc(store)}</textarea><button class="primary" id="copy">Copier le code</button><span id="cmsg" class="muted small"></span></section>
     <section class="sec"><h2>2. Coller un code</h2><textarea id="in" aria-label="Coller un code" placeholder="Colle ici le code copié dans l'autre version (il commence par O132:)"></textarea><button class="secondary" id="imp">Ajouter cette progression</button><span id="imsg" class="small"></span></section>
     <section class="sec" id="resetzone"><button class="linkbtn" id="reset">Effacer toute ma progression sur cette version</button></section></div>`;
+  const scc = document.getElementById("sccopy"); if (scc) { scc.onclick = () => { const ta = document.getElementById("sc"); navigator.clipboard.writeText(ta.value).then(() => scc.textContent = "Code copié", () => ta.select()); };
+    document.getElementById("scuse").onclick = () => { const v = document.getElementById("scin").value.trim(), m = document.getElementById("scmsg"); if (!/^o132-[0-9a-f]{48}$/.test(v)) { m.style.color = "var(--bad)"; m.textContent = "Ce code n'est pas valide."; return; } useSyncCode(v); m.style.color = "var(--ok)"; m.textContent = "Code enregistré : ta sauvegarde est en cours de récupération."; document.getElementById("sc").value = v; }; }
   document.getElementById("copy").onclick = () => { const ta = document.getElementById("out"), m = document.getElementById("cmsg");
     navigator.clipboard.writeText(ta.value).then(() => m.textContent = "Code copié.", () => { ta.select(); m.textContent = "Le code est sélectionné : copie-le avec le menu de ton téléphone."; }); };
   document.getElementById("imp").onclick = () => { const m = document.getElementById("imsg");
